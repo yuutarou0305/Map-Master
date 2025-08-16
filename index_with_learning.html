@@ -1,0 +1,3019 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>世界地理マスター</title>
+  <link rel="stylesheet" href="learningStyles.css">
+  <style>
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background: #f5f5f5; 
+      margin: 0; 
+      padding: 0; 
+      transition: background 0.3s, color 0.3s;
+      color: #333;
+    }
+    .container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 2px 16px #ccd; padding: 32px; }
+    h1 { 
+      text-align: center; 
+      font-size: 2.2rem; 
+      margin-bottom: 32px;
+      color: #2c3e50;
+      font-weight: 700;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .score { 
+      font-weight: bold; 
+      margin-top: 24px; 
+      text-align: center; 
+      font-size: 1.5rem; 
+      background: linear-gradient(135deg, #fff 0%, #f8fbff 100%); 
+      padding: 20px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 2px solid rgba(100, 151, 237, 0.2);
+      color: #2c3e50;
+    }
+    #main-area { min-height: 300px; transition: color 0.3s; }
+    button, .piece { 
+      padding: 12px 28px; 
+      font-size: 1.1rem; 
+      border-radius: 8px; 
+      border: none; 
+      background: #4f8ef7; 
+      color: #fff; 
+      cursor: pointer; 
+      margin: 8px 0; 
+      transition: all 0.2s;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background: #357ae8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    button:disabled { 
+      background: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    
+    /* アイコンの視認性改善 */
+    .icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      padding: 8px 16px;
+      margin: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      font-size: 1.2rem;
+      min-width: 60px;
+      min-height: 60px;
+    }
+    
+    .icon-badge.streak {
+      background: linear-gradient(135deg, #ff6b6b, #ff8787);
+      color: white;
+    }
+    
+    .icon-badge.stats {
+      background: linear-gradient(135deg, #4ecdc4, #44a3aa);
+      color: white;
+    }
+    
+    .icon-badge.check {
+      background: linear-gradient(135deg, #51cf66, #37b24d);
+      color: white;
+    }
+    
+    .icon-badge.trophy {
+      background: linear-gradient(135deg, #ffd43b, #fab005);
+      color: #333;
+    }
+    
+    .icon-badge.detail {
+      background: linear-gradient(135deg, #364fc7, #5c7cfa);
+      color: white;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-weight: 600;
+    }
+    
+    /* AI解説アシスト */
+    .ai-assist-container {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      padding: 20px;
+      max-width: 350px;
+      display: none;
+      z-index: 1000;
+    }
+    
+    .ai-assist-container.show {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .ai-assist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .ai-assist-title {
+      font-weight: bold;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .ai-assist-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px;
+      color: #666;
+    }
+    
+    .ai-assist-content {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #555;
+    }
+    
+    .highlight-text {
+      background: #fff3cd;
+      padding: 2px 4px;
+      border-radius: 4px;
+      cursor: help;
+      position: relative;
+      transition: background 0.2s;
+    }
+    
+    .highlight-text:hover {
+      background: #ffe082;
+    }
+    
+    .ai-assist-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+      z-index: 999;
+    }
+    
+    .ai-assist-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .ai-assist-btn.active {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+    }
+    .mode-btns { text-align: center; margin: 24px 0; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+    .category-btns { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin: 20px 0 24px 0; }
+    .category-btns button { min-width: 140px; }
+    .back-btn-area { text-align: center; margin-top: 16px; }
+    .puzzle-pieces { display: flex; gap: 16px; justify-content: center; margin: 24px 0; flex-wrap: wrap; }
+    .piece { background: #4f8ef7; color: #fff; border-radius: 8px; cursor: pointer; font-size: 1.1rem; user-select: none; min-width: 80px; text-align: center; }
+    .piece.placed { background: #4CAF50; color: #fff; cursor: default; }
+    .piece.selected { background: #ff9800; transform: scale(1.1); }
+    .svg-map { display: block; margin: 0 auto; background: #eaf2ff; border-radius: 8px; }
+    .dropzone { stroke: #333; stroke-width: 1; fill: #f0f0f0; transition: fill 0.2s; cursor: pointer; }
+    .dropzone.active { fill: #ffe082; }
+    .dropzone.placed { fill: #81c784; stroke-width: 2; }
+    .pref-shape { fill: #b3e5fc; stroke: #333; stroke-width: 1; cursor: pointer; }
+    .pref-shape.selected { fill: #ffe082; stroke-width: 2; }
+    .pref-shape.placed { fill: #81c784; stroke-width: 2; }
+    .label { font-size: 14px; text-anchor: middle; pointer-events: none; }
+    .clear-btn { margin: 24px auto 0 auto; display: block; }
+    /* カスタマイズボタン右下固定 */
+    #customize-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 1000;
+      background: #4f8ef7;
+      color: #fff;
+      border-radius: 50%;
+      width: 56px;
+      height: 56px;
+      font-size: 2rem;
+      box-shadow: 0 2px 8px #aaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s;
+    }
+    #customize-fab:hover { background: #357ae8; }
+    
+    /* Learning Features Toggle */
+    .learning-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: #4f8ef7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="streak-display" class="streak-display" style="display: none;"></div>
+    <h1>世界地理マスター</h1>
+    <div id="main-area"></div>
+    <div class="score" id="score-area"></div>
+  </div>
+  <button class="learning-toggle" onclick="toggleLearningMode()" id="learning-toggle">📊 学習モード</button>
+  <button id="customize-fab" title="カスタマイズ">⚙️</button>
+  
+  <!-- AI解説アシスト -->
+  <button id="ai-assist-btn" class="ai-assist-btn" title="AI解説アシスト">🤖</button>
+  <div id="ai-assist-container" class="ai-assist-container">
+    <div class="ai-assist-header">
+      <div class="ai-assist-title">
+        <span>🤖</span>
+        <span>AI解説アシスト</span>
+      </div>
+      <button class="ai-assist-close" onclick="closeAIAssist()">✕</button>
+    </div>
+    <div class="ai-assist-content" id="ai-assist-content">
+      クイズやパズルでわからない部分をクリックすると、AIが詳しく解説します。
+    </div>
+  </div>
+  
+  <audio id="bgm" loop></audio>
+  <audio id="se-correct" src="se-correct.mp3" preload="auto"></audio>
+  <audio id="se-wrong" src="se-wrong.mp3" preload="auto"></audio>
+  <audio id="se-click" src="se-click.mp3" preload="auto"></audio>
+  <script src="learningData.js"></script>
+  <script src="learningUI.js"></script>
+  <script src="activeRecall.js"></script>
+  <script>
+    // 学習モードの状態
+    let learningModeEnabled = localStorage.getItem('learningModeEnabled') === 'true';
+    
+    // 効果音設定
+    let seEnabled = true;
+    
+    // ゲーム設定
+    let gameDifficulty = 'normal'; // 'easy', 'normal', 'hard'
+    let questionCount = 10; // 5, 10, 15
+    
+    // カスタムクイズデータ
+    let customQuizzes = [];
+    let customQuizIndex = 0;
+    let customQuizScore = 0;
+    let customQuizQuestions = [];
+    let currentCustomQuiz = null;
+    
+    // 各モードの最高スコアを保存
+    let bestScores = {
+      quiz: 0,
+      sort: 0,
+      timeattack: 0,
+      map: 0,
+      mascot: 0,
+      dialect: 0,
+      world: 0,
+      prefectures: 0,
+      mountains: 0,
+      rivers: 0,
+      plains: 0
+    };
+    
+    // ローカルストレージからスコアを読み込み
+    function loadScores() {
+      const saved = localStorage.getItem('geoQuizScores');
+      if (saved) {
+        const savedScores = JSON.parse(saved);
+        // 既存のスコアとマージして、新しいプロパティも確実に初期化
+        bestScores = {
+          quiz: savedScores.quiz || 0,
+          sort: savedScores.sort || 0,
+          timeattack: savedScores.timeattack || 0,
+          map: savedScores.map || 0,
+          mascot: savedScores.mascot || 0,
+          dialect: savedScores.dialect || 0,
+          world: savedScores.world || 0,
+          prefectures: savedScores.prefectures || 0,
+          mountains: savedScores.mountains || 0,
+          rivers: savedScores.rivers || 0,
+          plains: savedScores.plains || 0
+        };
+      }
+      updateTotalScore();
+    }
+    
+    // カスタムクイズの管理機能
+    function loadCustomQuizzes() {
+      const saved = localStorage.getItem('customQuizzes');
+      if (saved) {
+        customQuizzes = JSON.parse(saved);
+      }
+    }
+    
+    function saveCustomQuizzes() {
+      localStorage.setItem('customQuizzes', JSON.stringify(customQuizzes));
+    }
+    
+    // スコアを保存
+    function saveScore(mode, score) {
+      if (score > bestScores[mode]) {
+        bestScores[mode] = score;
+        localStorage.setItem('geoQuizScores', JSON.stringify(bestScores));
+        updateTotalScore();
+      }
+    }
+    
+    // 合計スコアを更新
+    function updateTotalScore() {
+      const total = Object.values(bestScores).reduce((sum, score) => sum + score, 0);
+      
+      let scoreHTML;
+      if (learningModeEnabled) {
+        const weekStats = learningData.getWeeklyStats();
+        scoreHTML = `
+          <div style="display:flex;justify-content:space-around;flex-wrap:wrap;gap:8px;">
+            <div class="icon-badge streak">
+              <div>
+                <div style="font-size: 1.8rem;">🔥</div>
+                <div style="font-size: 0.9rem;">連続</div>
+                <div style="font-weight: bold;">${learningData.data.streak.current}日</div>
+              </div>
+            </div>
+            <div class="icon-badge stats">
+              <div>
+                <div style="font-size: 1.8rem;">📊</div>
+                <div style="font-size: 0.9rem;">今週</div>
+                <div style="font-weight: bold;">${weekStats.totalMinutes}分</div>
+              </div>
+            </div>
+            <div class="icon-badge check">
+              <div>
+                <div style="font-size: 1.8rem;">✅</div>
+                <div style="font-size: 0.9rem;">正答率</div>
+                <div style="font-weight: bold;">${weekStats.accuracy.toFixed(1)}%</div>
+              </div>
+            </div>
+            <div class="icon-badge trophy">
+              <div>
+                <div style="font-size: 1.8rem;">🏆</div>
+                <div style="font-size: 0.9rem;">スコア</div>
+                <div style="font-weight: bold;">${total}点</div>
+              </div>
+            </div>
+            <button onclick="learningUI.showDashboard()" class="icon-badge detail">
+              📈 詳細
+            </button>
+          </div>
+        `;
+      } else {
+        scoreHTML = `
+          <div style="display:flex;justify-content:space-around;flex-wrap:wrap;gap:16px;">
+            <div>🏆 合計スコア: <b>${total}</b></div>
+            <div>クイズ: ${bestScores.quiz}</div>
+            <div>並べ替え: ${bestScores.sort}</div>
+            <div>タイム: ${bestScores.timeattack}</div>
+            <div>地図: ${bestScores.map}</div>
+            <div>マスコット: ${bestScores.mascot}</div>
+            <div>方言: ${bestScores.dialect}</div>
+            <div>県庁: ${bestScores.prefectures}</div>
+            <div>山地: ${bestScores.mountains}</div>
+            <div>川: ${bestScores.rivers}</div>
+            <div>平地: ${bestScores.plains}</div>
+            ${total >= 100 ? '<div>世界: ' + bestScores.world + '</div>' : ''}
+          </div>
+        `;
+      }
+      
+      document.getElementById('score-area').innerHTML = scoreHTML;
+      
+      // 100点以上で世界地理クイズを解放
+      if (total >= 100) {
+        const worldBtn = document.getElementById('btn-world');
+        if (worldBtn) {
+          worldBtn.style.display = 'block';
+        }
+      }
+    }
+    
+    // 効果音再生（音声ファイルが存在しない場合は何もしない）
+    function playSE(id) {
+      if (!seEnabled) return;
+      const se = document.getElementById(id);
+      if (se) { 
+        se.currentTime = 0; 
+        se.volume = 0.7; // 音量を設定
+        se.play().catch(e => {
+          console.log(`効果音再生エラー (${id}):`, e);
+          // 少し待ってから再試行
+          setTimeout(() => {
+            try {
+              se.currentTime = 0;
+              se.play().catch(err => console.log(`効果音再試行失敗 (${id}):`, err));
+            } catch (retryError) {
+              console.log(`効果音再試行中にエラー (${id}):`, retryError);
+            }
+          }, 100);
+        });
+      } else {
+        console.log(`効果音要素が見つかりません: ${id}`);
+      }
+    }
+    
+    function toggleSE() {
+      seEnabled = !seEnabled;
+      alert(seEnabled ? '効果音をONにしました' : '効果音をOFFにしました');
+    }
+
+    // ランダムシャッフル関数
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // クイズデータ
+    const quizData = [
+      { question: '日本で一番面積が広い都道府県は？', choices: ['北海道', '岩手県', '福島県', '長野県'], answer: 0 },
+      { question: '日本で一番人口が多い都道府県は？', choices: ['大阪府', '愛知県', '東京都', '神奈川県'], answer: 2 },
+      { question: '日本の首都は？', choices: ['大阪市', '名古屋市', '東京都', '札幌市'], answer: 2 },
+      { question: '日本で一番南にある都道府県は？', choices: ['沖縄県', '鹿児島県', '高知県', '宮崎県'], answer: 0 },
+      { question: '日本で一番北にある都道府県は？', choices: ['北海道', '青森県', '秋田県', '岩手県'], answer: 0 },
+      { question: '日本三景に含まれないのは？', choices: ['松島', '天橋立', '宮島', '富士山'], answer: 3 },
+      { question: '日本で一番面積が小さい都道府県は？', choices: ['香川県', '大阪府', '佐賀県', '沖縄県'], answer: 0 },
+      { question: '日本で一番高い山は？', choices: ['富士山', '北岳', '槍ヶ岳', '穂高岳'], answer: 0 },
+      { question: '日本で一番長い川は？', choices: ['信濃川', '利根川', '石狩川', '天竜川'], answer: 0 },
+      { question: '日本で一番大きい湖は？', choices: ['琵琶湖', '霞ヶ浦', 'サロマ湖', '猪苗代湖'], answer: 0 },
+      { question: 'みかんの生産量日本一は？', choices: ['愛媛県', '和歌山県', '静岡県', '熊本県'], answer: 1 },
+      { question: 'りんごの生産量日本一は？', choices: ['青森県', '長野県', '山形県', '福島県'], answer: 0 },
+      { question: '米の生産量日本一は？', choices: ['新潟県', '北海道', '秋田県', '山形県'], answer: 0 },
+      { question: '世界遺産「白神山地」がある県は？', choices: ['青森県・秋田県', '岩手県・宮城県', '山形県・福島県', '新潟県・富山県'], answer: 0 },
+      { question: '日本で一番深い湖は？', choices: ['田沢湖', '支笏湖', '十和田湖', '摩周湖'], answer: 0 },
+      { question: 'さくらんぼの生産量日本一は？', choices: ['山梨県', '山形県', '福島県', '青森県'], answer: 1 },
+      { question: 'お茶の生産量日本一は？', choices: ['静岡県', '京都府', '鹿児島県', '三重県'], answer: 0 },
+      { question: 'じゃがいもの生産量日本一は？', choices: ['北海道', '長崎県', '鹿児島県', '茨城県'], answer: 0 },
+      { question: 'なしの生産量日本一は？', choices: ['鳥取県', '千葉県', '茨城県', '福島県'], answer: 1 },
+      { question: 'ぶどうの生産量日本一は？', choices: ['山梨県', '長野県', '山形県', '岡山県'], answer: 0 },
+      { question: 'いちごの生産量日本一は？', choices: ['福岡県', '栃木県', '熊本県', '静岡県'], answer: 1 },
+      { question: '牛肉の生産量日本一は？', choices: ['北海道', '鹿児島県', '宮崎県', '熊本県'], answer: 0 },
+      { question: '豚肉の生産量日本一は？', choices: ['鹿児島県', '宮崎県', '茨城県', '千葉県'], answer: 0 },
+      { question: '日本で唯一、県名と県庁所在地名が異なる県は？', choices: ['島根県', '愛媛県', '香川県', '高知県'], answer: 0 },
+      { question: '日本の最東端は？', choices: ['択捉島', '南鳥島', '与那国島', '沖ノ鳥島'], answer: 1 },
+      { question: '日本の最西端は？', choices: ['与那国島', '波照間島', '西表島', '石垣島'], answer: 0 },
+      { question: '日本で一番人口密度が高い都道府県は？', choices: ['東京都', '大阪府', '神奈川県', '埼玉県'], answer: 0 },
+      { question: '日本で一番人口密度が低い都道府県は？', choices: ['北海道', '岩手県', '秋田県', '高知県'], answer: 0 },
+      { question: '新幹線が通っていない県は？', choices: ['島根県', '愛媛県', '高知県', '全て通っている'], answer: 2 },
+      { question: '空港がない県は？', choices: ['奈良県', '滋賀県', '京都府', '全てにある'], answer: 0 },
+      { question: '日本三大祭りに含まれないのは？', choices: ['祇園祭', '天神祭', '神田祭', 'ねぶた祭'], answer: 3 },
+      { question: '日本三大花火大会に含まれないのは？', choices: ['大曲花火', '土浦花火', '長岡花火', '隅田川花火'], answer: 3 },
+      { question: '日本三大うどんに含まれないのは？', choices: ['讃岐うどん', '稲庭うどん', '水沢うどん', 'きしめん'], answer: 3 },
+      { question: '日本三大そばに含まれないのは？', choices: ['わんこそば', '戸隠そば', '出雲そば', '信州そば'], answer: 3 },
+      { question: '日本三大ラーメンに含まれないのは？', choices: ['札幌ラーメン', '博多ラーメン', '喜多方ラーメン', '横浜ラーメン'], answer: 3 },
+      { question: '日本三大温泉に含まれないのは？', choices: ['別府温泉', '白浜温泉', '熱海温泉', '箱根温泉'], answer: 3 },
+      { question: '日本三大夜景に含まれないのは？', choices: ['函館', '神戸', '長崎', '横浜'], answer: 3 },
+      { question: '世界遺産「屋久島」がある県は？', choices: ['鹿児島県', '宮崎県', '沖縄県', '長崎県'], answer: 0 },
+      { question: '世界遺産「平泉」がある県は？', choices: ['岩手県', '宮城県', '福島県', '山形県'], answer: 0 },
+      { question: '世界遺産「富士山」に関係ない県は？', choices: ['山梨県', '静岡県', '神奈川県', '全て関係する'], answer: 2 },
+      { question: '世界遺産「白川郷」がある県は？', choices: ['岐阜県', '富山県', '石川県', '福井県'], answer: 0 },
+      { question: '世界遺産「厳島神社」がある県は？', choices: ['広島県', '岡山県', '島根県', '山口県'], answer: 0 },
+      { question: '甲子園球場がある県は？', choices: ['大阪府', '兵庫県', '京都府', '奈良県'], answer: 1 },
+      { question: '東京スカイツリーの高さは？', choices: ['333m', '634m', '828m', '1000m'], answer: 1 },
+      { question: 'USJがある府県は？', choices: ['東京都', '千葉県', '大阪府', '兵庫県'], answer: 2 },
+      { question: '日本一長いトンネルは？', choices: ['青函トンネル', '関越トンネル', '山手トンネル', '新神戸トンネル'], answer: 0 },
+      { question: '日本一長い橋は？', choices: ['明石海峡大橋', '瀬戸大橋', 'レインボーブリッジ', '関門橋'], answer: 0 },
+      { question: '日本の国鳥は？', choices: ['トキ', 'ツル', 'キジ', 'ワシ'], answer: 2 },
+      { question: '日本の国花は？', choices: ['桜', '梅', '菊', '桜と菊'], answer: 3 },
+      { question: '日本の通貨単位は？', choices: ['円', 'ドル', 'ユーロ', 'ウォン'], answer: 0 },
+      { question: '日本の人口は約何人？', choices: ['1億人', '1億2千万人', '1億5千万人', '2億人'], answer: 1 },
+      { question: '日本の島の数は約いくつ？', choices: ['1000', '3000', '7000', '14000'], answer: 3 }
+    ];
+
+    // 並べ替えパズルデータ
+    const sortData = [
+      ['北海道', '青森県', '岩手県', '宮城県', '秋田県'],
+      ['東京都', '神奈川県', '千葉県', '埼玉県', '茨城県'],
+      ['大阪府', '兵庫県', '京都府', '滋賀県', '奈良県'],
+      ['愛知県', '岐阜県', '三重県', '静岡県', '長野県'],
+      ['福岡県', '佐賀県', '長崎県', '熊本県', '大分県'],
+      ['広島県', '岡山県', '山口県', '島根県', '鳥取県'],
+      ['香川県', '徳島県', '愛媛県', '高知県', '和歌山県'],
+      ['富山県', '石川県', '福井県', '新潟県', '山形県'],
+      ['群馬県', '栃木県', '茨城県', '埼玉県', '千葉県'],
+      ['宮崎県', '鹿児島県', '沖縄県', '熊本県', '長崎県'],
+      ['秋田県', '山形県', '福島県', '宮城県', '岩手県'],
+      ['静岡県', '山梨県', '長野県', '新潟県', '富山県'],
+      ['岡山県', '広島県', '山口県', '愛媛県', '香川県'],
+      ['三重県', '滋賀県', '京都府', '大阪府', '奈良県'],
+      ['福井県', '石川県', '富山県', '新潟県', '長野県']
+    ];
+
+    // 全都道府県並べ替え（五十音順）
+    const allPrefs = [
+      '愛知県','秋田県','青森県','愛媛県','石川県','茨城県','岩手県','大分県','大阪府','岡山県','沖縄県','香川県','鹿児島県','神奈川県','岐阜県','京都府','熊本県','群馬県','高知県','埼玉県','佐賀県','滋賀県','静岡県','島根県','千葉県','東京都','徳島県','栃木県','鳥取県','富山県','長崎県','長野県','奈良県','新潟県','兵庫県','広島県','福井県','福岡県','福島県','北海道','三重県','宮城県','宮崎県','山形県','山口県','山梨県','和歌山県'
+    ];
+    let allSortCurrent = [];
+    let allSortScore = 0;
+    function showAllPrefSort() {
+      allSortCurrent = shuffle([...allPrefs]);
+      let html = `<h2>全都道府県を五十音順に並べ替えよ</h2><ul id="allsort-list" style="list-style:none;padding:0;max-height:400px;overflow:auto;">`;
+      allSortCurrent.forEach((item, idx) => {
+        html += `<li data-idx="${idx}" style="margin:4px 0;">
+          <span>${item}</span>
+          <button onclick="moveAllUp(${idx})">↑</button>
+          <button onclick="moveAllDown(${idx})">↓</button>
+        </li>`;
+      });
+      html += '</ul>';
+      html += '<button onclick="checkAllSortAnswer()">答え合わせ</button>';
+      html += '<button id="back-btn">トップに戻る</button>';
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+    }
+    window.moveAllUp = function(idx) {
+      if (idx === 0) return;
+      [allSortCurrent[idx - 1], allSortCurrent[idx]] = [allSortCurrent[idx], allSortCurrent[idx - 1]];
+      showAllPrefSort();
+    };
+    window.moveAllDown = function(idx) {
+      if (idx === allSortCurrent.length - 1) return;
+      [allSortCurrent[idx + 1], allSortCurrent[idx]] = [allSortCurrent[idx], allSortCurrent[idx + 1]];
+      showAllPrefSort();
+    };
+    window.checkAllSortAnswer = function() {
+      const correct = allSortCurrent.join() === [...allPrefs].sort().join();
+      let msg = correct ? '正解！' : '不正解。';
+      
+      if (correct) {
+        playSE('se-correct');
+      } else {
+        playSE('se-wrong');
+      }
+      
+      // 現在の並びと正解を表示
+      // 答えを中央に大きく表示
+      const resultDiv = document.createElement('div');
+      resultDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:32px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:80%;max-height:80%;overflow:auto;z-index:1000;';
+      resultDiv.innerHTML = `
+        <h2 style="color:${correct ? 'green' : 'red'};text-align:center;">${msg}</h2>
+        ${!correct ? `<div style="margin-top:16px;"><b>正解：</b><br>${[...allPrefs].sort().join(' → ')}</div>` : ''}
+        <button onclick="this.parentElement.remove()" style="margin-top:16px;display:block;margin-left:auto;margin-right:auto;">閉じる</button>
+      `;
+      document.body.appendChild(resultDiv);
+      
+      // ボタンを無効化
+      document.querySelector('button[onclick="checkAllSortAnswer()"]').disabled = true;
+    };
+
+    // 県庁所在地クイズデータ
+    const prefecturesQuizData = [
+      { question: '北海道の県庁所在地は？', choices: ['札幌市', '函館市', '旭川市', '釧路市'], answer: 0 },
+      { question: '青森県の県庁所在地は？', choices: ['弘前市', '八戸市', '青森市', '三沢市'], answer: 2 },
+      { question: '岩手県の県庁所在地は？', choices: ['仙台市', '盛岡市', '一関市', '花巻市'], answer: 1 },
+      { question: '宮城県の県庁所在地は？', choices: ['仙台市', '石巻市', '大崎市', '登米市'], answer: 0 },
+      { question: '秋田県の県庁所在地は？', choices: ['秋田市', '大館市', '横手市', '能代市'], answer: 0 },
+      { question: '山形県の県庁所在地は？', choices: ['米沢市', '酒田市', '山形市', '鶴岡市'], answer: 2 },
+      { question: '福島県の県庁所在地は？', choices: ['郡山市', 'いわき市', '会津若松市', '福島市'], answer: 3 },
+      { question: '茨城県の県庁所在地は？', choices: ['つくば市', 'ひたちなか市', '水戸市', '土浦市'], answer: 2 },
+      { question: '栃木県の県庁所在地は？', choices: ['宇都宮市', '小山市', '足利市', '佐野市'], answer: 0 },
+      { question: '群馬県の県庁所在地は？', choices: ['高崎市', '伊勢崎市', '太田市', '前橋市'], answer: 3 },
+      { question: '埼玉県の県庁所在地は？', choices: ['川越市', 'さいたま市', '川口市', '所沢市'], answer: 1 },
+      { question: '千葉県の県庁所在地は？', choices: ['船橋市', '柏市', '千葉市', '市川市'], answer: 2 },
+      { question: '東京都の県庁所在地は？', choices: ['東京都', '新宿区', '千代田区', '渋谷区'], answer: 0 },
+      { question: '神奈川県の県庁所在地は？', choices: ['川崎市', '相模原市', '藤沢市', '横浜市'], answer: 3 },
+      { question: '新潟県の県庁所在地は？', choices: ['長岡市', '上越市', '新潟市', '三条市'], answer: 2 },
+      { question: '富山県の県庁所在地は？', choices: ['高岡市', '富山市', '射水市', '南砺市'], answer: 1 },
+      { question: '石川県の県庁所在地は？', choices: ['金沢市', '小松市', '白山市', '七尾市'], answer: 0 },
+      { question: '福井県の県庁所在地は？', choices: ['坂井市', '越前市', '敦賀市', '福井市'], answer: 3 },
+      { question: '山梨県の県庁所在地は？', choices: ['富士吉田市', '甲府市', '甲斐市', '南アルプス市'], answer: 1 },
+      { question: '長野県の県庁所在地は？', choices: ['松本市', '上田市', '長野市', '飯田市'], answer: 2 },
+      { question: '岐阜県の県庁所在地は？', choices: ['大垣市', '岐阜市', '高山市', '多治見市'], answer: 1 },
+      { question: '静岡県の県庁所在地は？', choices: ['浜松市', '静岡市', '沼津市', '富士市'], answer: 1 },
+      { question: '愛知県の県庁所在地は？', choices: ['名古屋市', '豊田市', '岡崎市', '豊橋市'], answer: 0 },
+      { question: '三重県の県庁所在地は？', choices: ['四日市市', '鈴鹿市', '津市', '松阪市'], answer: 2 },
+      { question: '滋賀県の県庁所在地は？', choices: ['彦根市', '草津市', '大津市', '長浜市'], answer: 2 },
+      { question: '京都府の県庁所在地は？', choices: ['宇治市', '京都市', '舞鶴市', '福知山市'], answer: 1 },
+      { question: '大阪府の県庁所在地は？', choices: ['堺市', '東大阪市', '大阪市', '豊中市'], answer: 2 },
+      { question: '兵庫県の県庁所在地は？', choices: ['姫路市', '神戸市', '西宮市', '尼崎市'], answer: 1 },
+      { question: '奈良県の県庁所在地は？', choices: ['橿原市', '生駒市', '奈良市', '大和郡山市'], answer: 2 },
+      { question: '和歌山県の県庁所在地は？', choices: ['田辺市', '和歌山市', '海南市', '新宮市'], answer: 1 },
+      { question: '鳥取県の県庁所在地は？', choices: ['米子市', '倉吉市', '鳥取市', '境港市'], answer: 2 },
+      { question: '島根県の県庁所在地は？', choices: ['出雲市', '浜田市', '益田市', '松江市'], answer: 3 },
+      { question: '岡山県の県庁所在地は？', choices: ['倉敷市', '津山市', '岡山市', '玉野市'], answer: 2 },
+      { question: '広島県の県庁所在地は？', choices: ['福山市', '呉市', '尾道市', '広島市'], answer: 3 },
+      { question: '山口県の県庁所在地は？', choices: ['下関市', '宇部市', '山口市', '防府市'], answer: 2 },
+      { question: '徳島県の県庁所在地は？', choices: ['鳴門市', '阿南市', '徳島市', '吉野川市'], answer: 2 },
+      { question: '香川県の県庁所在地は？', choices: ['丸亀市', '高松市', '坂出市', '観音寺市'], answer: 1 },
+      { question: '愛媛県の県庁所在地は？', choices: ['今治市', '新居浜市', '松山市', '西条市'], answer: 2 },
+      { question: '高知県の県庁所在地は？', choices: ['南国市', '四万十市', '高知市', '安芸市'], answer: 2 },
+      { question: '福岡県の県庁所在地は？', choices: ['北九州市', '福岡市', '久留米市', '大牟田市'], answer: 1 },
+      { question: '佐賀県の県庁所在地は？', choices: ['唐津市', '鳥栖市', '佐賀市', '伊万里市'], answer: 2 },
+      { question: '長崎県の県庁所在地は？', choices: ['佐世保市', '諫早市', '長崎市', '大村市'], answer: 2 },
+      { question: '熊本県の県庁所在地は？', choices: ['八代市', '熊本市', '天草市', '荒尾市'], answer: 1 },
+      { question: '大分県の県庁所在地は？', choices: ['別府市', '中津市', '大分市', '日田市'], answer: 2 },
+      { question: '宮崎県の県庁所在地は？', choices: ['都城市', '延岡市', '宮崎市', '日向市'], answer: 2 },
+      { question: '鹿児島県の県庁所在地は？', choices: ['鹿屋市', '鹿児島市', '薩摩川内市', '霧島市'], answer: 1 },
+      { question: '沖縄県の県庁所在地は？', choices: ['那覇市', '沖縄市', '浦添市', '宜野湾市'], answer: 0 }
+    ];
+    
+    // 山地山脈クイズデータ
+    const mountainsQuizData = [
+      { question: '日本アルプスに含まれない山脈は？', choices: ['北アルプス', '中央アルプス', '南アルプス', '奥羽山脈'], answer: 3 },
+      { question: '富士山がある山地は？', choices: ['箱根山地', '伊豆半島', '富士火山帯', '丹沢山地'], answer: 2 },
+      { question: '日本で二番目に高い山は？', choices: ['北岳', '間ノ岳', '奥穂高岳', '槍ヶ岳'], answer: 0 },
+      { question: '本州中央部を南北に走る山脈は？', choices: ['中央山脈', '日本海山脈', '太平洋山脈', 'フォッサマグナ'], answer: 0 },
+      { question: '九州最高峰の山は？', choices: ['阿蘇山', '九重山', '祖母山', '宮之浦岳'], answer: 3 },
+      { question: '中国山地の最高峰は？', choices: ['大山', '蒜山', '氷ノ山', '大山'], answer: 0 },
+      { question: '北海道の最高峰は？', choices: ['利尻岳', '羅臼岳', '旭岳', '十勝岳'], answer: 2 },
+      { question: '東北地方の背骨とも呼ばれる山脈は？', choices: ['奥羽山脈', '阿武隈山地', '北上山地', '出羽山地'], answer: 0 },
+      { question: '関東山地の最高峰は？', choices: ['雲取山', '甲武信ヶ岳', '金峰山', '大菩薩嶺'], answer: 0 },
+      { question: '四国山地の最高峰は？', choices: ['石鎚山', '剣山', '三嶺', '東赤石山'], answer: 0 },
+      { question: '日本三大急流に含まれない川は？', choices: ['最上川', '富士川', '球磨川', '天竜川'], answer: 3 },
+      { question: '立山連峰がある県は？', choices: ['長野県', '岐阜県', '富山県', '新潟県'], answer: 2 },
+      { question: '白山がある県境は？', choices: ['石川県・福井県', '石川県・富山県', '福井県・岐阜県', '石川県・岐阜県'], answer: 0 },
+      { question: '筑波山がある県は？', choices: ['栃木県', '群馬県', '茨城県', '埼玉県'], answer: 2 },
+      { question: '霧島山がある県は？', choices: ['熊本県・宮崎県', '宮崎県・鹿児島県', '鹿児島県・熊本県', '大分県・宮崎県'], answer: 1 },
+      { question: '八ヶ岳がある県は？', choices: ['長野県・山梨県', '長野県・群馬県', '山梨県・静岡県', '群馬県・新潟県'], answer: 0 },
+      { question: '浅間山がある県は？', choices: ['長野県・群馬県', '群馬県・新潟県', '長野県・山梨県', '群馬県・栃木県'], answer: 0 },
+      { question: '谷川岳がある県は？', choices: ['群馬県・新潟県', '新潟県・長野県', '群馬県・栃木県', '新潟県・富山県'], answer: 0 },
+      { question: '蔵王山がある県は？', choices: ['山形県・宮城県', '宮城県・福島県', '山形県・福島県', '山形県・新潟県'], answer: 0 },
+      { question: '月山がある県は？', choices: ['山形県', '新潟県', '福島県', '秋田県'], answer: 0 },
+      { question: '鳥海山がある県は？', choices: ['山形県・秋田県', '秋田県・青森県', '山形県・新潟県', '秋田県・岩手県'], answer: 0 },
+      { question: '岩木山がある県は？', choices: ['青森県', '秋田県', '岩手県', '山形県'], answer: 0 },
+      { question: '岩手山がある県は？', choices: ['岩手県', '宮城県', '秋田県', '青森県'], answer: 0 },
+      { question: '恐山がある県は？', choices: ['青森県', '秋田県', '岩手県', '山形県'], answer: 0 },
+      { question: '御嶽山がある県は？', choices: ['長野県・岐阜県', '岐阜県・愛知県', '長野県・山梨県', '岐阜県・富山県'], answer: 0 },
+      { question: '乗鞍岳がある県は？', choices: ['長野県・岐阜県', '岐阜県・富山県', '長野県・山梨県', '岐阜県・石川県'], answer: 0 },
+      { question: '槍ヶ岳がある県は？', choices: ['長野県・岐阜県', '長野県・富山県', '岐阜県・富山県', '長野県・新潟県'], answer: 0 },
+      { question: '穂高岳がある県は？', choices: ['長野県・岐阜県', '長野県・富山県', '岐阜県・富山県', '長野県・新潟県'], answer: 0 },
+      { question: '赤石山脈の別名は？', choices: ['北アルプス', '中央アルプス', '南アルプス', '日本アルプス'], answer: 2 },
+      { question: '飛騨山脈の別名は？', choices: ['北アルプス', '中央アルプス', '南アルプス', '日本アルプス'], answer: 0 },
+      { question: '木曽山脈の別名は？', choices: ['北アルプス', '中央アルプス', '南アルプス', '日本アルプス'], answer: 1 },
+      { question: '金峰山がある県は？', choices: ['山梨県・長野県', '長野県・群馬県', '山梨県・静岡県', '長野県・新潟県'], answer: 0 },
+      { question: '甲斐駒ヶ岳がある県は？', choices: ['山梨県・長野県', '山梨県・静岡県', '長野県・岐阜県', '山梨県・埼玉県'], answer: 0 },
+      { question: '北岳がある県は？', choices: ['山梨県', '長野県', '静岡県', '群馬県'], answer: 0 },
+      { question: '間ノ岳がある県は？', choices: ['山梨県・静岡県', '山梨県・長野県', '静岡県・長野県', '山梨県・神奈川県'], answer: 0 },
+      { question: '赤岳がある県は？', choices: ['長野県・山梨県', '長野県・群馬県', '山梨県・静岡県', '長野県・新潟県'], answer: 0 },
+      { question: '妙高山がある県は？', choices: ['新潟県', '長野県', '群馬県', '富山県'], answer: 0 },
+      { question: '苗場山がある県は？', choices: ['新潟県・長野県', '新潟県・群馬県', '長野県・群馬県', '新潟県・富山県'], answer: 0 }
+    ];
+    
+    // 川クイズデータ
+    const riversQuizData = [
+      { question: '日本で一番長い川は？', choices: ['信濃川', '利根川', '石狩川', '北上川'], answer: 0 },
+      { question: '日本で二番目に長い川は？', choices: ['利根川', '石狩川', '天竜川', '北上川'], answer: 0 },
+      { question: '関東平野を流れる大河は？', choices: ['多摩川', '荒川', '利根川', '江戸川'], answer: 2 },
+      { question: '九州最大の川は？', choices: ['筑後川', '球磨川', '大淀川', '遠賀川'], answer: 0 },
+      { question: '四国最大の川は？', choices: ['吉野川', '四万十川', '那賀川', '重信川'], answer: 0 },
+      { question: '中国地方最大の川は？', choices: ['江の川', '旭川', '吉井川', '高梁川'], answer: 0 },
+      { question: '東北地方最大の川は？', choices: ['北上川', '最上川', '阿武隈川', '米代川'], answer: 0 },
+      { question: '北海道最大の川は？', choices: ['石狩川', '十勝川', '天塩川', '釧路川'], answer: 0 },
+      { question: '日本三大急流の一つは？', choices: ['天竜川', '富士川', '木曽川', '大井川'], answer: 1 },
+      { question: '琵琶湖から流れ出る川は？', choices: ['淀川', '宇治川', '桂川', '木津川'], answer: 0 },
+      { question: '富山湾に注ぐ川は？', choices: ['神通川', '手取川', '九頭竜川', '庄川'], answer: 0 },
+      { question: '日本海に注ぐ川は？', choices: ['阿賀野川', '久慈川', '那珂川', '相模川'], answer: 0 },
+      { question: '太平洋に注ぐ川は？', choices: ['信濃川', '阿賀野川', '最上川', '久慈川'], answer: 3 },
+      { question: '瀬戸内海に注ぐ川は？', choices: ['淀川', '紀の川', '那賀川', '遠賀川'], answer: 0 },
+      { question: '暴れ川として有名だった川は？', choices: ['利根川', '荒川', '多摩川', '相模川'], answer: 0 },
+      { question: '木曽三川に含まれない川は？', choices: ['木曽川', '長良川', '揖斐川', '矢作川'], answer: 3 },
+      { question: '多摩川が流れる都県は？', choices: ['東京都・神奈川県', '東京都・埼玉県', '東京都・千葉県', '東京都・山梨県'], answer: 0 },
+      { question: '荒川が流れる都県は？', choices: ['埼玉県・東京都', '東京都・千葉県', '埼玉県・群馬県', '東京都・神奈川県'], answer: 0 },
+      { question: '相模川が流れる県は？', choices: ['神奈川県・山梨県', '神奈川県・静岡県', '神奈川県・東京都', '神奈川県・千葉県'], answer: 0 },
+      { question: '淀川の上流にある川は？', choices: ['宇治川・木津川・桂川', '大和川・石川・佐保川', '武庫川・猪名川・藻川', '加古川・市川・夢前川'], answer: 0 },
+      { question: '琵琶湖から流れ出る川は？', choices: ['瀬田川', '安曇川', '野洲川', '姉川'], answer: 0 },
+      { question: '紀の川が流れる県は？', choices: ['奈良県・和歌山県', '三重県・和歌山県', '大阪府・和歌山県', '兵庫県・和歌山県'], answer: 0 },
+      { question: '熊野川が流れる県は？', choices: ['三重県・和歌山県・奈良県', '三重県・和歌山県', '奈良県・和歌山県', '和歌山県・大阪府'], answer: 0 },
+      { question: '大和川が流れる府県は？', choices: ['奈良県・大阪府', '京都府・大阪府', '兵庫県・大阪府', '滋賀県・大阪府'], answer: 0 },
+      { question: '旭川が流れる県は？', choices: ['岡山県', '広島県', '鳥取県', '島根県'], answer: 0 },
+      { question: '太田川が流れる県は？', choices: ['広島県', '岡山県', '山口県', '島根県'], answer: 0 },
+      { question: '江の川が流れる県は？', choices: ['広島県・島根県', '岡山県・鳥取県', '山口県・島根県', '広島県・山口県'], answer: 0 },
+      { question: '高梁川が流れる県は？', choices: ['岡山県', '広島県', '鳥取県', '島根県'], answer: 0 },
+      { question: '吉井川が流れる県は？', choices: ['岡山県', '広島県', '兵庫県', '鳥取県'], answer: 0 },
+      { question: '千代川が流れる県は？', choices: ['鳥取県', '島根県', '岡山県', '兵庫県'], answer: 0 },
+      { question: '日野川が流れる県は？', choices: ['鳥取県', '島根県', '福井県', '両方にある'], answer: 3 },
+      { question: '斐伊川が流れる県は？', choices: ['島根県', '鳥取県', '広島県', '山口県'], answer: 0 },
+      { question: '天竜川が流れる県は？', choices: ['長野県・静岡県・愛知県', '長野県・静岡県', '静岡県・愛知県', '長野県・愛知県'], answer: 0 },
+      { question: '富士川が流れる県は？', choices: ['山梨県・静岡県', '静岡県・神奈川県', '山梨県・長野県', '静岡県・愛知県'], answer: 0 },
+      { question: '大井川が流れる県は？', choices: ['静岡県', '愛知県', '山梨県', '長野県'], answer: 0 },
+      { question: '狩野川が流れる県は？', choices: ['静岡県', '神奈川県', '山梨県', '愛知県'], answer: 0 },
+      { question: '矢作川が流れる県は？', choices: ['愛知県', '岐阜県', '三重県', '静岡県'], answer: 0 },
+      { question: '豊川が流れる県は？', choices: ['愛知県', '静岡県', '長野県', '岐阜県'], answer: 0 },
+      { question: '庄内川が流れる県は？', choices: ['岐阜県・愛知県', '愛知県・三重県', '岐阜県・三重県', '愛知県・静岡県'], answer: 0 }
+    ];
+    
+    // 平地・盆地・大地クイズデータ
+    const plainsQuizData = [
+      { question: '日本最大の平野は？', choices: ['関東平野', '濃尾平野', '大阪平野', '越後平野'], answer: 0 },
+      { question: '日本で二番目に大きい平野は？', choices: ['石狩平野', '仙台平野', '濃尾平野', '大阪平野'], answer: 0 },
+      { question: '甲府盆地がある県は？', choices: ['長野県', '山梨県', '静岡県', '岐阜県'], answer: 1 },
+      { question: '奈良盆地がある県は？', choices: ['奈良県', '京都府', '大阪府', '和歌山県'], answer: 0 },
+      { question: '会津盆地がある県は？', choices: ['山形県', '新潟県', '福島県', '栃木県'], answer: 2 },
+      { question: '津軽平野がある県は？', choices: ['青森県', '秋田県', '岩手県', '山形県'], answer: 0 },
+      { question: '庄内平野がある県は？', choices: ['新潟県', '山形県', '秋田県', '福島県'], answer: 1 },
+      { question: '筑紫平野がある県は？', choices: ['福岡県・佐賀県', '熊本県・大分県', '長崎県・佐賀県', '宮崎県・鹿児島県'], answer: 0 },
+      { question: '讃岐平野がある県は？', choices: ['愛媛県', '香川県', '徳島県', '高知県'], answer: 1 },
+      { question: '出雲平野がある県は？', choices: ['鳥取県', '島根県', '岡山県', '広島県'], answer: 1 },
+      { question: '武蔵野台地がある地域は？', choices: ['関東地方', '中部地方', '近畿地方', '中国地方'], answer: 0 },
+      { question: '根釧台地がある県は？', choices: ['北海道', '青森県', '岩手県', '宮城県'], answer: 0 },
+      { question: '阿蘇カルデラがある県は？', choices: ['大分県', '宮崎県', '熊本県', '鹿児島県'], answer: 2 },
+      { question: '十勝平野がある地域は？', choices: ['北海道', '東北地方', '関東地方', '中部地方'], answer: 0 },
+      { question: '宮崎平野がある県は？', choices: ['大分県', '熊本県', '宮崎県', '鹿児島県'], answer: 2 },
+      { question: '根釧台地がある地域は？', choices: ['北海道', '青森県', '岩手県', '秋田県'], answer: 0 },
+      { question: '秋田平野がある県は？', choices: ['青森県', '秋田県', '山形県', '岩手県'], answer: 1 },
+      { question: '庄内平野がある県は？', choices: ['山形県', '新潟県', '秋田県', '福島県'], answer: 0 },
+      { question: '新潟平野がある県は？', choices: ['新潟県', '富山県', '長野県', '福島県'], answer: 0 },
+      { question: '越後平野の別名は？', choices: ['新潟平野', '高田平野', '長岡平野', '柏崎平野'], answer: 0 },
+      { question: '富山平野がある県は？', choices: ['富山県', '石川県', '新潟県', '福井県'], answer: 0 },
+      { question: '福井平野がある県は？', choices: ['福井県', '石川県', '富山県', '滋賀県'], answer: 0 },
+      { question: '甲府盆地がある県は？', choices: ['山梨県', '長野県', '群馬県', '静岡県'], answer: 0 },
+      { question: '松本盆地がある県は？', choices: ['長野県', '山梨県', '岐阜県', '新潟県'], answer: 0 },
+      { question: '上田盆地がある県は？', choices: ['長野県', '群馬県', '新潟県', '山梨県'], answer: 0 },
+      { question: '諏訪盆地がある県は？', choices: ['長野県', '山梨県', '岐阜県', '静岡県'], answer: 0 },
+      { question: '長野盆地の別名は？', choices: ['善光寺平', '松本平', '伊那谷', '佐久平'], answer: 0 },
+      { question: '岐阜平野の別名は？', choices: ['濃尾平野', '美濃平野', '飛騨平野', '木曽平野'], answer: 0 },
+      { question: '静岡平野がある県は？', choices: ['静岡県', '愛知県', '山梨県', '神奈川県'], answer: 0 },
+      { question: '浜松平野がある県は？', choices: ['静岡県', '愛知県', '岐阜県', '三重県'], answer: 0 },
+      { question: '豊橋平野がある県は？', choices: ['愛知県', '静岡県', '三重県', '岐阜県'], answer: 0 },
+      { question: '伊勢平野がある県は？', choices: ['三重県', '愛知県', '岐阜県', '滋賀県'], answer: 0 },
+      { question: '近江盆地がある県は？', choices: ['滋賀県', '京都府', '三重県', '福井県'], answer: 0 },
+      { question: '京都盆地がある府は？', choices: ['京都府', '大阪府', '滋賀県', '奈良県'], answer: 0 },
+      { question: '奈良盆地がある県は？', choices: ['奈良県', '大阪府', '京都府', '和歌山県'], answer: 0 },
+      { question: '播磨平野がある県は？', choices: ['兵庫県', '岡山県', '大阪府', '京都府'], answer: 0 },
+      { question: '岡山平野がある県は？', choices: ['岡山県', '広島県', '兵庫県', '鳥取県'], answer: 0 },
+      { question: '出雲平野がある県は？', choices: ['島根県', '鳥取県', '広島県', '山口県'], answer: 0 },
+      { question: '讃岐平野がある県は？', choices: ['香川県', '徳島県', '愛媛県', '高知県'], answer: 0 },
+      { question: '松山平野がある県は？', choices: ['愛媛県', '香川県', '高知県', '徳島県'], answer: 0 },
+      { question: '高知平野がある県は？', choices: ['高知県', '愛媛県', '徳島県', '香川県'], answer: 0 },
+      { question: '筑後平野がある県は？', choices: ['福岡県・佐賀県', '福岡県・大分県', '佐賀県・長崎県', '福岡県・熊本県'], answer: 0 },
+      { question: '佐賀平野がある県は？', choices: ['佐賀県', '長崎県', '福岡県', '熊本県'], answer: 0 },
+      { question: '熊本平野がある県は？', choices: ['熊本県', '宮崎県', '鹿児島県', '大分県'], answer: 0 },
+      { question: '大分平野がある県は？', choices: ['大分県', '宮崎県', '熊本県', '福岡県'], answer: 0 },
+      { question: '鹿児島平野がある県は？', choices: ['鹿児島県', '宮崎県', '熊本県', '沖縄県'], answer: 0 },
+      { question: 'シラス台地が広がる県は？', choices: ['鹿児島県', '宮崎県', '熊本県', '大分県'], answer: 0 }
+    ];
+
+    // 世界地理クイズデータ
+    const worldQuizData = [
+      { question: '世界で一番大きい国は？', choices: ['ロシア', 'カナダ', '中国', 'アメリカ'], answer: 0 },
+      { question: '世界で一番人口が多い国は？', choices: ['インド', '中国', 'アメリカ', 'インドネシア'], answer: 0 },
+      { question: 'エッフェル塔がある国は？', choices: ['フランス', 'イタリア', 'スペイン', 'ドイツ'], answer: 0 },
+      { question: '世界一長い川は？', choices: ['ナイル川', 'アマゾン川', 'ミシシッピ川', '長江'], answer: 0 },
+      { question: '世界一高い山は？', choices: ['エベレスト', 'K2', 'マッキンリー', 'アコンカグア'], answer: 0 },
+      { question: 'ピラミッドがある国は？', choices: ['エジプト', 'メキシコ', 'ペルー', 'インド'], answer: 0 },
+      { question: 'パンダの故郷は？', choices: ['中国', '日本', 'インド', 'オーストラリア'], answer: 0 },
+      { question: 'オリンピック発祥の国は？', choices: ['ギリシャ', 'イタリア', 'フランス', 'イギリス'], answer: 0 },
+      { question: '世界一小さい国は？', choices: ['バチカン市国', 'モナコ', 'サンマリノ', 'リヒテンシュタイン'], answer: 0 },
+      { question: 'サグラダ・ファミリアがある国は？', choices: ['スペイン', 'イタリア', 'フランス', 'ポルトガル'], answer: 0 },
+      { question: 'カンガルーの国は？', choices: ['オーストラリア', 'ニュージーランド', '南アフリカ', 'インド'], answer: 0 },
+      { question: 'フィヨルドが多い国は？', choices: ['ノルウェー', 'スウェーデン', 'フィンランド', 'デンマーク'], answer: 0 },
+      { question: 'マチュピチュがある国は？', choices: ['ペルー', 'ボリビア', 'エクアドル', 'チリ'], answer: 0 },
+      { question: 'サッカーワールドカップ優勝回数最多の国は？', choices: ['ブラジル', 'ドイツ', 'イタリア', 'アルゼンチン'], answer: 0 },
+      { question: 'ナイアガラの滝がある国は？', choices: ['カナダ・アメリカ', 'ブラジル', 'アルゼンチン', 'メキシコ'], answer: 0 }
+    ];
+    
+    // 世界地理クイズ
+    let worldQuizIndex = 0;
+    let worldQuizScore = 0;
+    let worldQuizQuestions = [];
+    function showWorldQuiz() {
+      if (worldQuizIndex === 0) {
+        let shuffledData = shuffle([...worldQuizData]);
+        
+        // 難易度に応じて問題を絞り込み
+        if (gameDifficulty === 'easy') {
+          const easyCountries = ['アメリカ', '中国', 'イギリス', 'フランス', 'ドイツ', 'イタリア', 'カナダ', 'オーストラリア', 'ブラジル', 'インド'];
+          const easyQuestions = shuffledData.filter(q => easyCountries.some(country => q.question.includes(country) || q.choices.some(choice => choice.includes(country))));
+          shuffledData = easyQuestions.length >= questionCount ? easyQuestions : shuffledData;
+        } else if (gameDifficulty === 'hard') {
+          const hardCountries = ['ルワンダ', 'ブータン', 'エストニア', 'スロベニア', 'ウルグアイ', 'トンガ', 'バヌアツ', 'フィジー', 'パラオ', 'モルディブ'];
+          const hardQuestions = shuffledData.filter(q => hardCountries.some(country => q.question.includes(country) || q.choices.some(choice => choice.includes(country))));
+          shuffledData = hardQuestions.length >= questionCount ? hardQuestions : shuffledData;
+        }
+        
+        const questionNum = Math.min(questionCount, shuffledData.length);
+        worldQuizQuestions = shuffledData.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        worldQuizScore = 0;
+      }
+      if (worldQuizIndex >= worldQuizQuestions.length) {
+        saveScore('world', worldQuizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>世界地理クイズ終了！</h2><div class="score">あなたのスコアは <b>${worldQuizScore} / ${worldQuizQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('back-btn').onclick = showTopMenu;
+        worldQuizIndex = 0;
+        return;
+      }
+      const q = worldQuizQuestions[worldQuizIndex];
+      let html = `<h2>🌍 世界地理クイズ 第${worldQuizIndex + 1}問</h2><div style="font-size:1.2em;margin:16px 0;">${q.question}</div><form id="world-quiz-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:8px 0;font-size:1.1em;"><input type="radio" name="choice" value="${i}"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:16px;">回答</button></form><div id="world-quiz-feedback"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      document.getElementById('world-quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('world-quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:green;">正解！</span>' : `<span style="color:red;">不正解。正解は ${q.choices[q.answer]} です。</span>`;
+        if (isCorrect) worldQuizScore++;
+        worldQuizIndex++;
+        setTimeout(showWorldQuiz, 1200);
+      };
+    }
+    
+    // 方言クイズデータ
+    const dialectQuizData = [
+      { question: '「なんしよん？」はどこの方言？', choices: ['香川県', '青森県', '大阪府', '沖縄県'], answer: 0 },
+      { question: '「だべ」はどこの方言？', choices: ['北海道・東北', '関西', '九州', '四国'], answer: 0 },
+      { question: '「めっちゃ」はどこの方言？', choices: ['関西', '関東', '東北', '九州'], answer: 0 },
+      { question: '「ばってん」はどこの方言？', choices: ['熊本県', '福岡県', '佐賀県', '長崎県'], answer: 0 },
+      { question: '「じゃん」はどこの方言？', choices: ['神奈川県', '東京都', '千葉県', '埼玉県'], answer: 0 },
+      { question: '「ほんま」はどこの方言？', choices: ['関西', '中国', '四国', '九州'], answer: 0 },
+      { question: '「なまら」はどこの方言？', choices: ['北海道', '青森県', '秋田県', '岩手県'], answer: 0 },
+      { question: '「うちなー」はどこの方言？', choices: ['沖縄県', '鹿児島県', '宮崎県', '熊本県'], answer: 0 },
+      { question: '「ずら」はどこの方言？', choices: ['山梨県・静岡県', '長野県', '新潟県', '群馬県'], answer: 0 },
+      { question: '「やけん」はどこの方言？', choices: ['広島県・山口県', '岡山県', '愛媛県', '香川県'], answer: 0 }
+    ];
+
+    // クイズ
+    let quizIndex = 0;
+    let quizScore = 0;
+    let quizQuestions = [];
+    
+    // 学習効率アップ機能用の変数
+    let wrongQuestions = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+    let categoryScores = JSON.parse(localStorage.getItem('categoryScores') || '{}');
+    let isTimedMode = false;
+    let timeLimit = 30; // 秒
+    let timerInterval = null;
+    let remainingTime = 0;
+    function showQuiz() {
+      if (quizIndex === 0) {
+        // 毎回完全に新しいランダム順序を生成
+        let shuffledData = shuffle([...quizData]);
+        
+        // 難易度に応じて問題を絞り込み
+        if (gameDifficulty === 'easy') {
+          // 簡単：基本的な地理知識の問題を優先
+          const easyKeywords = ['首都', '一番面積が広い', '一番人口が多い', '一番高い山', '一番長い川', '一番大きい湖', '三景', '富士山', '北海道', '東京', '大阪'];
+          const easyQuestions = shuffledData.filter(q => easyKeywords.some(keyword => q.question.includes(keyword) || q.choices.some(choice => choice.includes(keyword))));
+          shuffledData = easyQuestions.length >= questionCount ? easyQuestions : shuffledData;
+        } else if (gameDifficulty === 'hard') {
+          // 難しい：より具体的で詳細な知識が必要な問題
+          const hardKeywords = ['特産', '県庁所在地', '方言', '祭り', '郷土料理', '工業', '農業', '漁業', '温泉'];
+          const hardQuestions = shuffledData.filter(q => hardKeywords.some(keyword => q.question.includes(keyword)));
+          shuffledData = hardQuestions.length >= questionCount ? hardQuestions : shuffledData;
+        }
+        
+        // 問題数設定を適用
+        const questionNum = Math.min(questionCount, shuffledData.length);
+        
+        // 選択肢もランダムに並び替え
+        quizQuestions = shuffledData.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        quizScore = 0;
+      }
+      if (quizIndex >= quizQuestions.length) {
+        saveScore('quiz', quizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>クイズ終了！</h2><div class="score">あなたのスコアは <b>${quizScore} / ${quizQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('back-btn').onclick = showTopMenu;
+        quizIndex = 0;
+        return;
+      }
+      const q = quizQuestions[quizIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">第${quizIndex + 1}問</h2><div style="font-size:1.3em;margin:20px 0;color:#2c3e50;font-weight:500;line-height:1.6;text-shadow: 0 1px 1px rgba(0,0,0,0.05);">${q.question}</div><form id="quiz-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="quiz-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      document.getElementById('quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) quizScore++;
+        quizIndex++;
+        setTimeout(showQuiz, 1200);
+      };
+      applyMenuBtnColors && applyMenuBtnColors();
+    }
+
+    // 県庁所在地クイズ
+    let prefecturesQuizIndex = 0;
+    let prefecturesQuizScore = 0;
+    let prefecturesQuizQuestions = [];
+    function showPrefecturesQuiz() {
+      if (prefecturesQuizIndex === 0) {
+        let shuffledData = shuffle([...prefecturesQuizData]);
+        
+        // 難易度に応じて問題を絞り込み
+        if (gameDifficulty === 'easy') {
+          const easyPrefectures = ['東京', '大阪', '北海道', '神奈川', '愛知', '埼玉', '千葉', '兵庫', '福岡', '京都'];
+          const easyQuestions = shuffledData.filter(q => easyPrefectures.some(pref => q.question.includes(pref)));
+          shuffledData = easyQuestions.length >= questionCount ? easyQuestions : shuffledData;
+        } else if (gameDifficulty === 'hard') {
+          const hardPrefectures = ['鳥取', '島根', '徳島', '高知', '佐賀', '福井', '山梨', '和歌山', '鹿児島', '宮崎'];
+          const hardQuestions = shuffledData.filter(q => hardPrefectures.some(pref => q.question.includes(pref)));
+          shuffledData = hardQuestions.length >= questionCount ? hardQuestions : shuffledData;
+        }
+        
+        const questionNum = Math.min(questionCount, shuffledData.length);
+        prefecturesQuizQuestions = shuffledData.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        prefecturesQuizScore = 0;
+      }
+      if (prefecturesQuizIndex >= prefecturesQuizQuestions.length) {
+        saveScore('prefectures', prefecturesQuizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>県庁所在地クイズ終了！</h2><div class="score">あなたのスコアは <b>${prefecturesQuizScore} / ${prefecturesQuizQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('back-btn').onclick = showTopMenu;
+        prefecturesQuizIndex = 0;
+        return;
+      }
+      const q = prefecturesQuizQuestions[prefecturesQuizIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">🏛️ 県庁所在地クイズ 第${prefecturesQuizIndex + 1}問</h2><div style="font-size:1.3em;margin:20px 0;color:#2c3e50;font-weight:500;line-height:1.6;text-shadow: 0 1px 1px rgba(0,0,0,0.05);">${q.question}</div><form id="prefectures-quiz-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="prefectures-quiz-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      document.getElementById('prefectures-quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('prefectures-quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) prefecturesQuizScore++;
+        prefecturesQuizIndex++;
+        setTimeout(showPrefecturesQuiz, 1200);
+      };
+    }
+
+    // 山地山脈クイズ
+    let mountainsQuizIndex = 0;
+    let mountainsQuizScore = 0;
+    let mountainsQuizQuestions = [];
+    function showMountainsQuiz() {
+      if (mountainsQuizIndex === 0) {
+        let shuffledData = shuffle([...mountainsQuizData]);
+        
+        // 難易度に応じて問題を絞り込み
+        if (gameDifficulty === 'easy') {
+          const easyMountains = ['富士山', '北アルプス', '南アルプス', '中央アルプス', '阿蘇山', '霧島山'];
+          const easyQuestions = shuffledData.filter(q => easyMountains.some(mountain => q.question.includes(mountain) || q.choices.some(choice => choice.includes(mountain))));
+          shuffledData = easyQuestions.length >= questionCount ? easyQuestions : shuffledData;
+        } else if (gameDifficulty === 'hard') {
+          const hardMountains = ['大雪山', '白山', '剣山', '石鎚山', '九重山', '筑波山'];
+          const hardQuestions = shuffledData.filter(q => hardMountains.some(mountain => q.question.includes(mountain) || q.choices.some(choice => choice.includes(mountain))));
+          shuffledData = hardQuestions.length >= questionCount ? hardQuestions : shuffledData;
+        }
+        
+        const questionNum = Math.min(questionCount, shuffledData.length);
+        mountainsQuizQuestions = shuffledData.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        mountainsQuizScore = 0;
+      }
+      if (mountainsQuizIndex >= mountainsQuizQuestions.length) {
+        saveScore('mountains', mountainsQuizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>山地・山脈クイズ終了！</h2><div class="score">あなたのスコアは <b>${mountainsQuizScore} / ${mountainsQuizQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('back-btn').onclick = showTopMenu;
+        mountainsQuizIndex = 0;
+        return;
+      }
+      const q = mountainsQuizQuestions[mountainsQuizIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">⛰️ 山地・山脈クイズ 第${mountainsQuizIndex + 1}問</h2><div style="font-size:1.3em;margin:20px 0;color:#2c3e50;font-weight:500;line-height:1.6;text-shadow: 0 1px 1px rgba(0,0,0,0.05);">${q.question}</div><form id="mountains-quiz-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="mountains-quiz-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      document.getElementById('mountains-quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('mountains-quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) mountainsQuizScore++;
+        mountainsQuizIndex++;
+        setTimeout(showMountainsQuiz, 1200);
+      };
+    }
+
+    // 川クイズ
+    let riversQuizIndex = 0;
+    let riversQuizScore = 0;
+    let riversQuizQuestions = [];
+    function showRiversQuiz() {
+      if (riversQuizIndex === 0) {
+        let shuffledData = shuffle([...riversQuizData]);
+        
+        // 難易度に応じて問題を絞り込み
+        if (gameDifficulty === 'easy') {
+          const easyRivers = ['信濃川', '利根川', '石狩川', '北上川', '阿武隈川', '最上川'];
+          const easyQuestions = shuffledData.filter(q => easyRivers.some(river => q.question.includes(river) || q.choices.some(choice => choice.includes(river))));
+          shuffledData = easyQuestions.length >= questionCount ? easyQuestions : shuffledData;
+        } else if (gameDifficulty === 'hard') {
+          const hardRivers = ['雄物川', '米代川', '子吉川', '赤川', '小矢部川', '手取川'];
+          const hardQuestions = shuffledData.filter(q => hardRivers.some(river => q.question.includes(river) || q.choices.some(choice => choice.includes(river))));
+          shuffledData = hardQuestions.length >= questionCount ? hardQuestions : shuffledData;
+        }
+        
+        const questionNum = Math.min(questionCount, shuffledData.length);
+        riversQuizQuestions = shuffledData.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        riversQuizScore = 0;
+      }
+      if (riversQuizIndex >= riversQuizQuestions.length) {
+        saveScore('rivers', riversQuizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>川クイズ終了！</h2><div class="score">あなたのスコアは <b>${riversQuizScore} / ${riversQuizQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('back-btn').onclick = showTopMenu;
+        riversQuizIndex = 0;
+        return;
+      }
+      const q = riversQuizQuestions[riversQuizIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">🏞️ 川クイズ 第${riversQuizIndex + 1}問</h2><div style="font-size:1.3em;margin:20px 0;color:#2c3e50;font-weight:500;line-height:1.6;text-shadow: 0 1px 1px rgba(0,0,0,0.05);">${q.question}</div><form id="rivers-quiz-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="rivers-quiz-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      document.getElementById('rivers-quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('rivers-quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) riversQuizScore++;
+        riversQuizIndex++;
+        setTimeout(showRiversQuiz, 1200);
+      };
+    }
+
+    // 平地・盆地・大地クイズ
+    let plainsQuizIndex = 0;
+    let plainsQuizScore = 0;
+    let plainsQuizQuestions = [];
+    function showPlainsQuiz() {
+      if (plainsQuizIndex === 0) {
+        let shuffledData = shuffle([...plainsQuizData]);
+        
+        // 難易度に応じて問題を絞り込み
+        if (gameDifficulty === 'easy') {
+          const easyPlains = ['関東平野', '濃尾平野', '大阪平野', '筑紫平野', '石狩平野', '仙台平野'];
+          const easyQuestions = shuffledData.filter(q => easyPlains.some(plain => q.question.includes(plain) || q.choices.some(choice => choice.includes(plain))));
+          shuffledData = easyQuestions.length >= questionCount ? easyQuestions : shuffledData;
+        } else if (gameDifficulty === 'hard') {
+          const hardPlains = ['津軽平野', '庄内平野', '会津盆地', '甲府盆地', '松本盆地', '飛騨高地'];
+          const hardQuestions = shuffledData.filter(q => hardPlains.some(plain => q.question.includes(plain) || q.choices.some(choice => choice.includes(plain))));
+          shuffledData = hardQuestions.length >= questionCount ? hardQuestions : shuffledData;
+        }
+        
+        const questionNum = Math.min(questionCount, shuffledData.length);
+        plainsQuizQuestions = shuffledData.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        plainsQuizScore = 0;
+      }
+      if (plainsQuizIndex >= plainsQuizQuestions.length) {
+        saveScore('plains', plainsQuizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>平地・盆地・大地クイズ終了！</h2><div class="score">あなたのスコアは <b>${plainsQuizScore} / ${plainsQuizQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('back-btn').onclick = showTopMenu;
+        plainsQuizIndex = 0;
+        return;
+      }
+      const q = plainsQuizQuestions[plainsQuizIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">🏔️ 平地・盆地・大地クイズ 第${plainsQuizIndex + 1}問</h2><div style="font-size:1.3em;margin:20px 0;color:#2c3e50;font-weight:500;line-height:1.6;text-shadow: 0 1px 1px rgba(0,0,0,0.05);">${q.question}</div><form id="plains-quiz-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="plains-quiz-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      document.getElementById('plains-quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('plains-quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) plainsQuizScore++;
+        plainsQuizIndex++;
+        setTimeout(showPlainsQuiz, 1200);
+      };
+    }
+
+    // 並べ替えパズル
+    let sortIndex = 0;
+    let sortScore = 0;
+    let sortCurrent = [];
+    let sortQuestions = [];
+    function showSortPuzzle() {
+      if (sortIndex === 0) {
+        // 毎回完全に新しいランダム順序を生成
+        sortQuestions = shuffle([...sortData]).slice(0, 10);
+        sortScore = 0;
+      }
+      if (sortIndex >= sortQuestions.length) {
+        saveScore('sort', sortScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>並べ替えパズル終了！</h2><div class="score">あなたのスコアは <b>${sortScore} / ${sortQuestions.length}</b> です</div><button id="back-btn">トップに戻る</button>`;
+        document.getElementById('score-area').textContent = '';
+        document.getElementById('back-btn').onclick = showTopMenu;
+        sortIndex = 0;
+        return;
+      }
+      sortCurrent = shuffle([...sortQuestions[sortIndex]]);
+      let html = `<h2>第${sortIndex + 1}問：五十音順に並べ替えよ</h2><ul id="sort-list" style="list-style:none;padding:0;">`;
+      sortCurrent.forEach((item, idx) => {
+        html += `<li data-idx="${idx}" style="margin:8px 0;">
+          <span>${item}</span>
+          <button onclick="moveUp(${idx})">↑</button>
+          <button onclick="moveDown(${idx})">↓</button>
+        </li>`;
+      });
+      html += '</ul>';
+      html += '<button onclick="checkSortAnswer()">答え合わせ</button>';
+      html += '<button id="back-btn">トップに戻る</button>';
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      applyMenuBtnColors();
+    }
+    window.moveUp = function(idx) {
+      if (idx === 0) return;
+      [sortCurrent[idx - 1], sortCurrent[idx]] = [sortCurrent[idx], sortCurrent[idx - 1]];
+      showSortPuzzle();
+    };
+    window.moveDown = function(idx) {
+      if (idx === sortCurrent.length - 1) return;
+      [sortCurrent[idx + 1], sortCurrent[idx]] = [sortCurrent[idx], sortCurrent[idx + 1]];
+      showSortPuzzle();
+    };
+    window.checkSortAnswer = function() {
+      const correct = [...sortCurrent].join() === [...sortCurrent].sort().join();
+      const correctOrder = [...sortCurrent].sort().join(' → ');
+      
+      if (correct) {
+        sortScore++;
+        playSE('se-correct');
+        // 答えを中央に表示
+        const resultDiv = document.createElement('div');
+        resultDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:1000;';
+        resultDiv.innerHTML = '<h2 style="color:green;text-align:center;">正解！</h2>';
+        document.body.appendChild(resultDiv);
+        setTimeout(() => resultDiv.remove(), 1500);
+      } else {
+        playSE('se-wrong');
+        // 答えを中央に表示
+        const resultDiv = document.createElement('div');
+        resultDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:80%;z-index:1000;';
+        resultDiv.innerHTML = `<h2 style="color:red;text-align:center;">不正解</h2><div style="margin-top:16px;"><b>正解：</b><br>${correctOrder}</div>`;
+        document.body.appendChild(resultDiv);
+        setTimeout(() => resultDiv.remove(), 2000);
+      }
+      
+      setTimeout(() => {
+        sortIndex++;
+        showSortPuzzle();
+      }, 2000);
+    };
+
+    // タイムアタック
+    let timeIndex = 0;
+    let timeScore = 0;
+    let timeLeft = 60;
+    let timeTimer = null;
+    let timeQuestions = [];
+    function showTimeAttack() {
+      if (timeIndex === 0) {
+        timeQuestions = shuffle([...quizData]);
+        timeLeft = 60;
+        timeScore = 0;
+        if (timeTimer) clearInterval(timeTimer);
+        timeTimer = setInterval(() => {
+          timeLeft--;
+          document.getElementById('score-area').textContent = `残り時間: ${timeLeft}秒 | スコア: ${timeScore}`;
+          if (timeLeft <= 0) {
+            clearInterval(timeTimer);
+            saveScore('timeattack', timeScore);
+            document.getElementById('main-area').innerHTML = `<h2>タイムアタック終了！</h2><p>あなたのスコアは <b>${timeScore} / ${timeQuestions.length}</b> です。</p><button id="back-btn">トップに戻る</button>`;
+            updateTotalScore();
+            document.getElementById('back-btn').onclick = function() {
+              timeIndex = 0;
+              showTopMenu();
+            };
+          }
+        }, 1000);
+      }
+      if (timeIndex >= timeQuestions.length || timeLeft <= 0) {
+        return;
+      }
+      const q = timeQuestions[timeIndex];
+      let html = `<h2>第${timeIndex + 1}問</h2><div>${q.question}</div><form id="time-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label><input type="radio" name="choice" value="${i}"> ${choice}</label><br>`;
+      });
+      html += `<button type="submit">回答</button></form><div id="time-feedback"></div>`;
+      html += '<button id="back-btn">トップに戻る</button>';
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('score-area').textContent = `残り時間: ${timeLeft}秒 | スコア: ${timeScore}`;
+      document.getElementById('back-btn').onclick = function() {
+        if (timeTimer) {
+          clearInterval(timeTimer);
+          timeTimer = null;
+        }
+        timeIndex = 0;
+        document.getElementById('score-area').textContent = '';
+        showTopMenu();
+      };
+      applyMenuBtnColors();
+      document.getElementById('time-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        document.getElementById('time-feedback').innerHTML =
+          isCorrect ? '<span style="color:green;">正解！</span>' : `<span style="color:red;">不正解。正解は ${q.choices[q.answer]} です。</span>`;
+        if (isCorrect) timeScore++;
+        timeIndex++;
+        setTimeout(showTimeAttack, 1000);
+      };
+    }
+
+    // 地図パズル（47都道府県）
+    const mapPuzzlePieces = [
+      { id: 'hokkaido', label: '北海道', x: 350, y: 50, w: 80, h: 60 },
+      { id: 'aomori', label: '青森県', x: 340, y: 130, w: 40, h: 40 },
+      { id: 'iwate', label: '岩手県', x: 350, y: 170, w: 40, h: 50 },
+      { id: 'miyagi', label: '宮城県', x: 340, y: 220, w: 40, h: 40 },
+      { id: 'akita', label: '秋田県', x: 330, y: 170, w: 40, h: 50 },
+      { id: 'yamagata', label: '山形県', x: 320, y: 220, w: 40, h: 40 },
+      { id: 'fukushima', label: '福島県', x: 330, y: 260, w: 50, h: 40 },
+      { id: 'ibaraki', label: '茨城県', x: 340, y: 300, w: 40, h: 40 },
+      { id: 'tochigi', label: '栃木県', x: 320, y: 300, w: 40, h: 30 },
+      { id: 'gunma', label: '群馬県', x: 300, y: 300, w: 40, h: 30 },
+      { id: 'saitama', label: '埼玉県', x: 320, y: 330, w: 40, h: 30 },
+      { id: 'chiba', label: '千葉県', x: 350, y: 340, w: 40, h: 40 },
+      { id: 'tokyo', label: '東京都', x: 320, y: 360, w: 30, h: 30 },
+      { id: 'kanagawa', label: '神奈川県', x: 310, y: 380, w: 40, h: 30 },
+      { id: 'niigata', label: '新潟県', x: 300, y: 240, w: 50, h: 50 },
+      { id: 'toyama', label: '富山県', x: 280, y: 280, w: 40, h: 30 },
+      { id: 'ishikawa', label: '石川県', x: 260, y: 280, w: 40, h: 40 },
+      { id: 'fukui', label: '福井県', x: 250, y: 320, w: 40, h: 30 },
+      { id: 'yamanashi', label: '山梨県', x: 290, y: 350, w: 40, h: 30 },
+      { id: 'nagano', label: '長野県', x: 280, y: 320, w: 40, h: 40 },
+      { id: 'gifu', label: '岐阜県', x: 260, y: 340, w: 40, h: 40 },
+      { id: 'shizuoka', label: '静岡県', x: 280, y: 380, w: 50, h: 30 },
+      { id: 'aichi', label: '愛知県', x: 260, y: 380, w: 40, h: 30 },
+      { id: 'mie', label: '三重県', x: 240, y: 380, w: 40, h: 40 },
+      { id: 'shiga', label: '滋賀県', x: 230, y: 360, w: 30, h: 30 },
+      { id: 'kyoto', label: '京都府', x: 220, y: 340, w: 40, h: 40 },
+      { id: 'osaka', label: '大阪府', x: 220, y: 380, w: 30, h: 30 },
+      { id: 'hyogo', label: '兵庫県', x: 200, y: 360, w: 40, h: 40 },
+      { id: 'nara', label: '奈良県', x: 230, y: 400, w: 30, h: 40 },
+      { id: 'wakayama', label: '和歌山県', x: 210, y: 410, w: 40, h: 40 },
+      { id: 'tottori', label: '鳥取県', x: 180, y: 340, w: 40, h: 30 },
+      { id: 'shimane', label: '島根県', x: 160, y: 340, w: 40, h: 30 },
+      { id: 'okayama', label: '岡山県', x: 180, y: 370, w: 40, h: 30 },
+      { id: 'hiroshima', label: '広島県', x: 160, y: 370, w: 40, h: 30 },
+      { id: 'yamaguchi', label: '山口県', x: 140, y: 370, w: 40, h: 30 },
+      { id: 'tokushima', label: '徳島県', x: 180, y: 410, w: 40, h: 30 },
+      { id: 'kagawa', label: '香川県', x: 180, y: 400, w: 40, h: 20 },
+      { id: 'ehime', label: '愛媛県', x: 160, y: 410, w: 40, h: 30 },
+      { id: 'kochi', label: '高知県', x: 160, y: 440, w: 50, h: 30 },
+      { id: 'fukuoka', label: '福岡県', x: 120, y: 380, w: 40, h: 30 },
+      { id: 'saga', label: '佐賀県', x: 100, y: 390, w: 30, h: 30 },
+      { id: 'nagasaki', label: '長崎県', x: 80, y: 390, w: 40, h: 40 },
+      { id: 'kumamoto', label: '熊本県', x: 110, y: 420, w: 40, h: 40 },
+      { id: 'oita', label: '大分県', x: 130, y: 410, w: 40, h: 30 },
+      { id: 'miyazaki', label: '宮崎県', x: 130, y: 440, w: 40, h: 40 },
+      { id: 'kagoshima', label: '鹿児島県', x: 110, y: 460, w: 40, h: 50 },
+      { id: 'okinawa', label: '沖縄県', x: 60, y: 480, w: 40, h: 30 }
+    ];
+    let mapPlaced = {};
+    let mapPuzzleMode = 0; // 0: 北日本, 1: 東日本, 2: 西日本, 3: 九州・沖縄
+    let mapScore = 0;
+    let selectedPref = null;
+    
+    function showMapPuzzle() {
+      mapPlaced = {};
+      mapScore = 0;
+      selectedPref = null;
+      let html = `<h2>地図パズル</h2>
+        <div class="category-btns">
+          <button onclick="setMapMode(0)">北日本</button>
+          <button onclick="setMapMode(1)">東日本</button>
+          <button onclick="setMapMode(2)">西日本</button>
+          <button onclick="setMapMode(3)">九州・沖縄</button>
+        </div>
+        <div style="margin:16px 0;font-size:1.2em;text-align:center;">スコア: <span id="map-score">0</span> / <span id="map-total">0</span></div>
+        <div style="display:flex;gap:20px;justify-content:center;">
+          <div style="flex:1;max-width:300px;">
+            <h3 style="text-align:center;">都道府県</h3>
+            <div id="pref-list" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;"></div>
+          </div>
+          <div style="flex:1;">
+            <svg id="japan-map" class="svg-map" width="500" height="550" viewBox="0 0 500 550">`;
+      
+      mapPuzzlePieces.forEach(piece => {
+        html += `<rect class="dropzone" id="drop-${piece.id}" data-pref="${piece.id}" x="${piece.x}" y="${piece.y}" width="${piece.w}" height="${piece.h}" />`;
+      });
+      
+      html += `</svg></div></div><button id="back-btn">トップに戻る</button><div id="puzzle-message" style="text-align:center;margin-top:16px;font-weight:bold;"></div>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('back-btn').onclick = showTopMenu;
+      setMapMode(0);
+    }
+    
+    window.setMapMode = function(mode) {
+      mapPuzzleMode = mode;
+      mapPlaced = {};
+      mapScore = 0;
+      renderMapPuzzlePieces();
+      setupMapPuzzleDropzones();
+      document.getElementById('puzzle-message').textContent = '';
+    };
+    
+    function getRegionPieces(mode) {
+      const regions = [
+        ['hokkaido', 'aomori', 'iwate', 'miyagi', 'akita', 'yamagata', 'fukushima'],
+        ['ibaraki', 'tochigi', 'gunma', 'saitama', 'chiba', 'tokyo', 'kanagawa', 'niigata', 'toyama', 'ishikawa', 'fukui', 'yamanashi', 'nagano', 'gifu', 'shizuoka', 'aichi'],
+        ['mie', 'shiga', 'kyoto', 'osaka', 'hyogo', 'nara', 'wakayama', 'tottori', 'shimane', 'okayama', 'hiroshima', 'yamaguchi', 'tokushima', 'kagawa', 'ehime', 'kochi'],
+        ['fukuoka', 'saga', 'nagasaki', 'kumamoto', 'oita', 'miyazaki', 'kagoshima', 'okinawa']
+      ];
+      return mapPuzzlePieces.filter(p => regions[mode].includes(p.id));
+    }
+    
+    function renderMapPuzzlePieces() {
+      const area = document.getElementById('pref-list');
+      area.innerHTML = '';
+      const pieces = getRegionPieces(mapPuzzleMode);
+      pieces.forEach(piece => {
+        if (!mapPlaced[piece.id]) {
+          const btn = document.createElement('button');
+          btn.className = 'piece' + (selectedPref === piece.id ? ' selected' : '');
+          btn.textContent = piece.label;
+          btn.dataset.prefId = piece.id;
+          btn.onclick = () => selectPrefecture(piece.id);
+          area.appendChild(btn);
+        }
+      });
+      updateMapScore();
+    }
+    
+    function selectPrefecture(prefId) {
+      selectedPref = selectedPref === prefId ? null : prefId;
+      renderMapPuzzlePieces();
+      
+      // 選択ボタンのハイライト
+      document.querySelectorAll('.piece').forEach(btn => {
+        if (btn.dataset.prefId === prefId) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+    }
+    
+    function updateMapScore() {
+      const pieces = getRegionPieces(mapPuzzleMode);
+      const placed = pieces.filter(p => mapPlaced[p.id]).length;
+      mapScore = placed;
+      document.getElementById('map-score').textContent = mapScore;
+      document.getElementById('map-total').textContent = pieces.length;
+    }
+    
+    function setupMapPuzzleDropzones() {
+      const pieces = getRegionPieces(mapPuzzleMode);
+      pieces.forEach(piece => {
+        const zone = document.getElementById(`drop-${piece.id}`);
+        if (!zone) return;
+        
+        zone.classList.remove('placed', 'active');
+        if (mapPlaced[piece.id]) {
+          zone.classList.add('placed');
+        }
+        
+        zone.onclick = function() {
+          if (selectedPref && selectedPref === piece.id && !mapPlaced[piece.id]) {
+            mapPlaced[piece.id] = true;
+            zone.classList.add('placed');
+            selectedPref = null;
+            renderMapPuzzlePieces();
+            setupMapPuzzleDropzones();
+            checkMapPuzzleClear();
+            
+            // 正解音
+            playSE('se-correct');
+          } else if (selectedPref && selectedPref !== piece.id && !mapPlaced[piece.id]) {
+            // 不正解音
+            playSE('se-wrong');
+          }
+        };
+        
+        zone.onmouseover = function() {
+          if (selectedPref && !mapPlaced[piece.id]) {
+            zone.classList.add('active');
+          }
+        };
+        
+        zone.onmouseout = function() {
+          zone.classList.remove('active');
+        };
+      });
+    }
+    
+    function checkMapPuzzleClear() {
+      const pieces = getRegionPieces(mapPuzzleMode);
+      if (pieces.every(p => mapPlaced[p.id])) {
+        const regionNames = ['北日本', '東日本', '西日本', '九州・沖縄'];
+        document.getElementById('puzzle-message').textContent = `${regionNames[mapPuzzleMode]}クリア！おめでとう！ スコア: ${mapScore}`;
+        saveScore('map', mapScore);
+      } else {
+        document.getElementById('puzzle-message').textContent = '';
+      }
+    }
+
+    // マスコットクイズデータ
+    const mascotQuizData = [
+      { name: 'くまモン', emoji: '🐻', choices: ['熊本県', '北海道', '愛媛県', '埼玉県'], answer: 0 },
+      { name: 'ふっかちゃん', emoji: '🦌', choices: ['埼玉県', '熊本県', '秋田県', '大阪府'], answer: 0 },
+      { name: 'バリィさん', emoji: '🐥', choices: ['愛媛県', '福岡県', '長野県', '宮城県'], answer: 0 },
+      { name: 'せんとくん', emoji: '🦌', choices: ['奈良県', '京都府', '大阪府', '兵庫県'], answer: 0 },
+      { name: 'チーバくん', emoji: '🐶', choices: ['千葉県', '神奈川県', '静岡県', '山梨県'], answer: 0 },
+      { name: 'ぐんまちゃん', emoji: '🐴', choices: ['群馬県', '栃木県', '茨城県', '埼玉県'], answer: 0 },
+      { name: 'ひこにゃん', emoji: '🐱', choices: ['滋賀県', '京都府', '大阪府', '奈良県'], answer: 0 },
+      { name: 'カパル', emoji: '🦆', choices: ['埼玉県', '千葉県', '東京都', '神奈川県'], answer: 0 },
+      { name: 'みきゃん', emoji: '🍊', choices: ['愛媛県', '香川県', '徳島県', '高知県'], answer: 0 },
+      { name: 'アルクマ', emoji: '🐻', choices: ['長野県', '新潟県', '富山県', '石川県'], answer: 0 }
+    ];
+    let mascotQuizIndex = 0;
+    let mascotQuizScore = 0;
+    let mascotQuestions = [];
+    function showMascotMode() {
+      if (mascotQuizIndex === 0) {
+        // 毎回完全に新しいランダム順序を生成
+        const shuffledData = shuffle([...mascotQuizData]);
+        // 選択肢もランダムに並び替え
+        mascotQuestions = shuffledData.slice(0, 10).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        mascotQuizScore = 0;
+      }
+      if (mascotQuizIndex >= mascotQuestions.length) {
+        saveScore('mascot', mascotQuizScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>マスコットクイズ終了！</h2>
+           <div class="score">あなたのスコアは <b>${mascotQuizScore} / ${mascotQuestions.length}</b> です</div>
+           <button id="back-btn">トップに戻る</button>`;
+        mascotQuizIndex = 0;
+        document.querySelectorAll('#back-btn').forEach(btn => btn.onclick = showTopMenu);
+        return;
+      }
+      const q = mascotQuestions[mascotQuizIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">🎆 このマスコットはどこの県？</h2>
+        <div style="text-align:center;font-size:3em;margin:20px 0;background:rgba(255,255,255,0.9);border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">${q.emoji}</div>
+        <div style="text-align:center;font-size:1.4em;margin-bottom:20px;color:#2c3e50;font-weight:600;text-shadow: 0 1px 1px rgba(0,0,0,0.05);"><b>${q.name}</b></div>
+        <form id="mascot-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="mascot-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('mascot-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('mascot-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) mascotQuizScore++;
+        mascotQuizIndex++;
+        setTimeout(showMascotMode, 1200);
+      };
+      document.querySelectorAll('#back-btn').forEach(btn => btn.onclick = showTopMenu);
+    }
+
+    // 方言モード
+    let dialectIndex = 0;
+    let dialectScore = 0;
+    let dialectQuestions = [];
+    function showDialectMode() {
+      if (dialectIndex === 0) {
+        // 毎回完全に新しいランダム順序を生成
+        const shuffledData = shuffle([...dialectQuizData]);
+        // 選択肢もランダムに並び替え
+        dialectQuestions = shuffledData.map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        dialectScore = 0;
+      }
+      if (dialectIndex >= dialectQuestions.length) {
+        saveScore('dialect', dialectScore);
+        document.getElementById('main-area').innerHTML =
+          `<h2>方言クイズ終了！</h2>
+           <div class="score">あなたのスコアは <b>${dialectScore} / ${dialectQuestions.length}</b> です</div>
+           <button id="back-btn">トップに戻る</button>`;
+        dialectIndex = 0;
+        document.querySelectorAll('#back-btn').forEach(btn => btn.onclick = showTopMenu);
+        return;
+      }
+      const q = dialectQuestions[dialectIndex];
+      let html = `<h2 style="color: #2c3e50; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">🗾 方言クイズ 第${dialectIndex + 1}問</h2>
+        <div style="font-size:1.3em;margin:20px 0;color:#2c3e50;font-weight:500;line-height:1.6;text-shadow: 0 1px 1px rgba(0,0,0,0.05);">${q.question}</div>
+        <form id="dialect-form">`;
+      q.choices.forEach((choice, i) => {
+        html += `<label style="display:block;margin:12px 0;font-size:1.15em;padding:12px 16px;background:rgba(255,255,255,0.8);border:2px solid #e0e6ed;border-radius:8px;cursor:pointer;transition:all 0.2s;color:#2c3e50;font-weight:500;" onmouseover="this.style.background='rgba(79,142,247,0.1)';this.style.borderColor='#4f8ef7';" onmouseout="this.style.background='rgba(255,255,255,0.8)';this.style.borderColor='#e0e6ed';"><input type="radio" name="choice" value="${i}" style="margin-right:12px;"> ${choice}</label>`;
+      });
+      html += `<button type="submit" style="margin-top:20px;font-size:1.2em;padding:14px 32px;font-weight:600;">回答</button></form><div id="dialect-feedback" style="margin:16px 0;font-size:1.2em;font-weight:600;"></div><button id="back-btn">トップに戻る</button>`;
+      document.getElementById('main-area').innerHTML = html;
+      document.getElementById('dialect-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('dialect-feedback').innerHTML =
+          isCorrect ? '<span style="color:#28a745;font-weight:bold;font-size:1.3em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">✅ 正解！</span>' : `<span style="color:#dc3545;font-weight:bold;font-size:1.1em;text-shadow: 0 1px 2px rgba(0,0,0,0.1);">❌ 不正解。正解は <strong style="color:#2c3e50;">${q.choices[q.answer]}</strong> です。</span>`;
+        if (isCorrect) dialectScore++;
+        dialectIndex++;
+        setTimeout(showDialectMode, 1200);
+      };
+      document.querySelectorAll('#back-btn').forEach(btn => btn.onclick = showTopMenu);
+    }
+
+    // トップメニュー各ボタンの色管理
+    const menuBtnColors = {
+      quiz: '#4f8ef7',
+      sort: '#4f8ef7',
+      allsort: '#4f8ef7',
+      timeattack: '#4f8ef7',
+      map: '#4f8ef7',
+      mascot: '#4f8ef7',
+      dialect: '#4f8ef7',
+      prefectures: '#4f8ef7',
+      mountains: '#4f8ef7',
+      rivers: '#4f8ef7',
+      plains: '#4f8ef7'
+    };
+
+    function setMenuBtnColor(key, color) {
+      menuBtnColors[key] = color;
+      showTopMenu();
+      showCustomize();
+    }
+    
+    // ゲーム設定関数
+    function setDifficulty(level) {
+      gameDifficulty = level;
+      showSettings();
+    }
+    
+    function setQuestionCount(count) {
+      questionCount = count;
+      showSettings();
+    }
+    
+    // 設定画面を表示
+    function showSettings() {
+      document.getElementById('main-area').innerHTML = `
+        <h2>ゲーム設定</h2>
+        <div style="margin:20px 0;">
+          <h3>難易度選択</h3>
+          <button onclick="setDifficulty('easy')" style="background:${gameDifficulty === 'easy' ? '#4CAF50' : '#ddd'}; color:${gameDifficulty === 'easy' ? '#fff' : '#333'}">簡単</button>
+          <button onclick="setDifficulty('normal')" style="background:${gameDifficulty === 'normal' ? '#4CAF50' : '#ddd'}; color:${gameDifficulty === 'normal' ? '#fff' : '#333'}">普通</button>
+          <button onclick="setDifficulty('hard')" style="background:${gameDifficulty === 'hard' ? '#4CAF50' : '#ddd'}; color:${gameDifficulty === 'hard' ? '#fff' : '#333'}">難しい</button>
+        </div>
+        <div style="margin:20px 0;">
+          <h3>問題数選択</h3>
+          <button onclick="setQuestionCount(5)" style="background:${questionCount === 5 ? '#4CAF50' : '#ddd'}; color:${questionCount === 5 ? '#fff' : '#333'}">5問</button>
+          <button onclick="setQuestionCount(10)" style="background:${questionCount === 10 ? '#4CAF50' : '#ddd'}; color:${questionCount === 10 ? '#fff' : '#333'}">10問</button>
+          <button onclick="setQuestionCount(15)" style="background:${questionCount === 15 ? '#4CAF50' : '#ddd'}; color:${questionCount === 15 ? '#fff' : '#333'}">15問</button>
+        </div>
+        <div style="margin:20px 0;">
+          <button onclick="showTopMenu()">メニューに戻る</button>
+          <button onclick="showCustomize()">カスタマイズ画面</button>
+          <button onclick="showQuizCreator()">クイズ作成</button>
+          <button onclick="showCustomQuizManager()">マイクイズ管理</button>
+        </div>
+      `;
+    }
+    
+    // クイズ作成画面
+    function showQuizCreator() {
+      document.getElementById('main-area').innerHTML = `
+        <h2>クイズ作成</h2>
+        <div style="margin:20px 0;">
+          <h3>クイズセット名</h3>
+          <input type="text" id="quiz-title" placeholder="例: 私の地理クイズ" style="width:100%;max-width:400px;padding:8px;font-size:1rem;" />
+        </div>
+        <div id="questions-container">
+          <h3>問題1</h3>
+          <div class="question-form">
+            <input type="text" id="question-1" placeholder="問題文を入力してください" style="width:100%;max-width:400px;padding:8px;margin:8px 0;font-size:1rem;" />
+            <div>
+              <input type="text" id="choice1-1" placeholder="選択肢1" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+              <input type="text" id="choice2-1" placeholder="選択肢2" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+            </div>
+            <div>
+              <input type="text" id="choice3-1" placeholder="選択肢3" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+              <input type="text" id="choice4-1" placeholder="選択肢4" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+            </div>
+            <div style="margin:8px 0;">
+              <label>正解：</label>
+              <select id="answer-1" style="padding:8px;font-size:1rem;">
+                <option value="0">選択肢1</option>
+                <option value="1">選択肢2</option>
+                <option value="2">選択肢3</option>
+                <option value="3">選択肢4</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div style="margin:20px 0;">
+          <button onclick="addQuestion()">問題を追加</button>
+          <button onclick="removeLastQuestion()">最後の問題を削除</button>
+        </div>
+        <div style="margin:20px 0;">
+          <button onclick="saveCustomQuiz()">クイズを保存</button>
+          <button onclick="showSettings()">設定に戻る</button>
+        </div>
+      `;
+    }
+    
+    let questionCounter = 1;
+    
+    function addQuestion() {
+      questionCounter++;
+      const container = document.getElementById('questions-container');
+      const questionDiv = document.createElement('div');
+      questionDiv.innerHTML = `
+        <h3>問題${questionCounter}</h3>
+        <div class="question-form">
+          <input type="text" id="question-${questionCounter}" placeholder="問題文を入力してください" style="width:100%;max-width:400px;padding:8px;margin:8px 0;font-size:1rem;" />
+          <div>
+            <input type="text" id="choice1-${questionCounter}" placeholder="選択肢1" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+            <input type="text" id="choice2-${questionCounter}" placeholder="選択肢2" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+          </div>
+          <div>
+            <input type="text" id="choice3-${questionCounter}" placeholder="選択肢3" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+            <input type="text" id="choice4-${questionCounter}" placeholder="選択肢4" style="width:48%;padding:8px;margin:4px 1%;font-size:1rem;" />
+          </div>
+          <div style="margin:8px 0;">
+            <label>正解：</label>
+            <select id="answer-${questionCounter}" style="padding:8px;font-size:1rem;">
+              <option value="0">選択肢1</option>
+              <option value="1">選択肢2</option>
+              <option value="2">選択肢3</option>
+              <option value="3">選択肢4</option>
+            </select>
+          </div>
+        </div>
+      `;
+      container.appendChild(questionDiv);
+    }
+    
+    function removeLastQuestion() {
+      if (questionCounter > 1) {
+        const container = document.getElementById('questions-container');
+        container.removeChild(container.lastElementChild);
+        questionCounter--;
+      }
+    }
+    
+    function saveCustomQuiz() {
+      const title = document.getElementById('quiz-title').value.trim();
+      if (!title) {
+        alert('クイズセット名を入力してください');
+        return;
+      }
+      
+      const questions = [];
+      for (let i = 1; i <= questionCounter; i++) {
+        const question = document.getElementById(`question-${i}`)?.value.trim();
+        const choice1 = document.getElementById(`choice1-${i}`)?.value.trim();
+        const choice2 = document.getElementById(`choice2-${i}`)?.value.trim();
+        const choice3 = document.getElementById(`choice3-${i}`)?.value.trim();
+        const choice4 = document.getElementById(`choice4-${i}`)?.value.trim();
+        const answer = parseInt(document.getElementById(`answer-${i}`)?.value);
+        
+        if (!question || !choice1 || !choice2 || !choice3 || !choice4) {
+          alert(`問題${i}の入力が不完全です`);
+          return;
+        }
+        
+        questions.push({
+          question: question,
+          choices: [choice1, choice2, choice3, choice4],
+          answer: answer
+        });
+      }
+      
+      const customQuiz = {
+        id: Date.now(),
+        title: title,
+        questions: questions,
+        createdAt: new Date().toLocaleDateString()
+      };
+      
+      customQuizzes.push(customQuiz);
+      saveCustomQuizzes();
+      
+      alert(`「${title}」を保存しました！（${questions.length}問）`);
+      questionCounter = 1;
+      showCustomQuizManager();
+    }
+    
+    // カスタムクイズ管理画面
+    function showCustomQuizManager() {
+      let html = `
+        <h2>マイクイズ管理</h2>
+        <div style="margin:20px 0;">
+          <button onclick="showQuizCreator()">新しいクイズを作成</button>
+          <button onclick="showSettings()">設定に戻る</button>
+        </div>
+      `;
+      
+      if (customQuizzes.length === 0) {
+        html += '<p>まだクイズが作成されていません。「新しいクイズを作成」ボタンから作成してください。</p>';
+      } else {
+        html += '<div style="margin:20px 0;">';
+        customQuizzes.forEach(quiz => {
+          html += `
+            <div style="border:1px solid #ddd;border-radius:8px;padding:16px;margin:16px 0;background:white;">
+              <h3>${quiz.title}</h3>
+              <p>問題数: ${quiz.questions.length}問 | 作成日: ${quiz.createdAt}</p>
+              <div>
+                <button onclick="playCustomQuiz(${quiz.id})" style="background:#4CAF50;">プレイ</button>
+                <button onclick="editCustomQuiz(${quiz.id})" style="background:#FF9800;">編集</button>
+                <button onclick="deleteCustomQuiz(${quiz.id})" style="background:#F44336;">削除</button>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+      }
+      
+      document.getElementById('main-area').innerHTML = html;
+    }
+    
+    function playCustomQuiz(quizId) {
+      currentCustomQuiz = customQuizzes.find(q => q.id === quizId);
+      if (!currentCustomQuiz) {
+        alert('クイズが見つかりません');
+        return;
+      }
+      customQuizIndex = 0;
+      customQuizScore = 0;
+      showCustomQuiz();
+    }
+    
+    function editCustomQuiz(quizId) {
+      const quiz = customQuizzes.find(q => q.id === quizId);
+      if (!quiz) {
+        alert('クイズが見つかりません');
+        return;
+      }
+      
+      // 編集画面を表示（作成画面を流用）
+      showQuizCreator();
+      
+      // データを入力フィールドに設定
+      setTimeout(() => {
+        document.getElementById('quiz-title').value = quiz.title;
+        
+        // 既存の問題数に合わせて問題フィールドを追加
+        while (questionCounter < quiz.questions.length) {
+          addQuestion();
+        }
+        
+        // 各問題のデータを設定
+        quiz.questions.forEach((q, index) => {
+          const i = index + 1;
+          document.getElementById(`question-${i}`).value = q.question;
+          document.getElementById(`choice1-${i}`).value = q.choices[0];
+          document.getElementById(`choice2-${i}`).value = q.choices[1];
+          document.getElementById(`choice3-${i}`).value = q.choices[2];
+          document.getElementById(`choice4-${i}`).value = q.choices[3];
+          document.getElementById(`answer-${i}`).value = q.answer;
+        });
+        
+        // 保存ボタンを編集用に変更
+        document.querySelector('button[onclick="saveCustomQuiz()"]').onclick = () => updateCustomQuiz(quizId);
+        document.querySelector('button[onclick="saveCustomQuiz()"]').textContent = 'クイズを更新';
+      }, 100);
+    }
+    
+    function updateCustomQuiz(quizId) {
+      const title = document.getElementById('quiz-title').value.trim();
+      if (!title) {
+        alert('クイズセット名を入力してください');
+        return;
+      }
+      
+      const questions = [];
+      for (let i = 1; i <= questionCounter; i++) {
+        const question = document.getElementById(`question-${i}`)?.value.trim();
+        const choice1 = document.getElementById(`choice1-${i}`)?.value.trim();
+        const choice2 = document.getElementById(`choice2-${i}`)?.value.trim();
+        const choice3 = document.getElementById(`choice3-${i}`)?.value.trim();
+        const choice4 = document.getElementById(`choice4-${i}`)?.value.trim();
+        const answer = parseInt(document.getElementById(`answer-${i}`)?.value);
+        
+        if (!question || !choice1 || !choice2 || !choice3 || !choice4) {
+          alert(`問題${i}の入力が不完全です`);
+          return;
+        }
+        
+        questions.push({
+          question: question,
+          choices: [choice1, choice2, choice3, choice4],
+          answer: answer
+        });
+      }
+      
+      const quizIndex = customQuizzes.findIndex(q => q.id === quizId);
+      if (quizIndex !== -1) {
+        customQuizzes[quizIndex].title = title;
+        customQuizzes[quizIndex].questions = questions;
+        saveCustomQuizzes();
+        
+        alert(`「${title}」を更新しました！（${questions.length}問）`);
+        questionCounter = 1;
+        showCustomQuizManager();
+      }
+    }
+    
+    function deleteCustomQuiz(quizId) {
+      const quiz = customQuizzes.find(q => q.id === quizId);
+      if (!quiz) {
+        alert('クイズが見つかりません');
+        return;
+      }
+      
+      if (confirm(`「${quiz.title}」を削除しますか？この操作は取り消せません。`)) {
+        customQuizzes = customQuizzes.filter(q => q.id !== quizId);
+        saveCustomQuizzes();
+        showCustomQuizManager();
+        alert('クイズを削除しました');
+      }
+    }
+    
+    // カスタムクイズプレイ機能
+    function showCustomQuiz() {
+      if (!currentCustomQuiz) {
+        alert('クイズデータがありません');
+        showCustomQuizManager();
+        return;
+      }
+      
+      if (customQuizIndex === 0) {
+        // クイズ開始時に問題をシャッフル
+        let shuffledQuestions = shuffle([...currentCustomQuiz.questions]);
+        const questionNum = Math.min(questionCount, shuffledQuestions.length);
+        
+        customQuizQuestions = shuffledQuestions.slice(0, questionNum).map(q => {
+          const shuffledChoices = shuffle([...q.choices]);
+          const newAnswer = shuffledChoices.indexOf(q.choices[q.answer]);
+          return { ...q, choices: shuffledChoices, answer: newAnswer };
+        });
+        customQuizScore = 0;
+      }
+      
+      if (customQuizIndex >= customQuizQuestions.length) {
+        // クイズ終了
+        document.getElementById('main-area').innerHTML =
+          `<h2>「${currentCustomQuiz.title}」終了！</h2>
+           <div class="score">あなたのスコアは <b>${customQuizScore} / ${customQuizQuestions.length}</b> です</div>
+           <button onclick="showCustomQuizManager()">マイクイズ管理に戻る</button>`;
+        customQuizIndex = 0;
+        return;
+      }
+      
+      const q = customQuizQuestions[customQuizIndex];
+      document.getElementById('main-area').innerHTML = `
+        <h2>「${currentCustomQuiz.title}」</h2>
+        <div class="question">問題 ${customQuizIndex + 1}/${customQuizQuestions.length}</div>
+        <div class="question">${q.question}</div>
+        <form id="custom-quiz-form">
+          <div class="choices">
+            ${q.choices.map((choice, i) => `
+              <div class="choice">
+                <label>
+                  <input type="radio" name="choice" value="${i}">
+                  ${choice}
+                </label>
+              </div>
+            `).join('')}
+          </div>
+          <button type="submit">回答</button>
+        </form>
+        <div id="custom-quiz-feedback" class="feedback"></div>
+        <button id="back-btn" onclick="showCustomQuizManager()">マイクイズ管理に戻る</button>
+      `;
+      
+      document.getElementById('custom-quiz-form').onsubmit = function(e) {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="choice"]:checked');
+        if (!selected) return;
+        const isCorrect = Number(selected.value) === q.answer;
+        playSE(isCorrect ? 'se-correct' : 'se-wrong');
+        document.getElementById('custom-quiz-feedback').innerHTML =
+          isCorrect ? '<span style="color:green;">正解！</span>' : `<span style="color:red;">不正解。正解は ${q.choices[q.answer]} です。</span>`;
+        if (isCorrect) customQuizScore++;
+        customQuizIndex++;
+        setTimeout(showCustomQuiz, 1200);
+      };
+    }
+
+    function setBgPattern(type, color) {
+      if (type === 'plain') {
+        document.body.style.background = color;
+        document.body.style.backgroundImage = '';
+      } else if (type === 'gradient1') {
+        document.body.style.background = '';
+        document.body.style.backgroundImage = 'linear-gradient(135deg, #4f8ef7 0%, #FF9800 50%, #4CAF50 100%)';
+      } else if (type === 'gradient2') {
+        document.body.style.background = '';
+        document.body.style.backgroundImage = 'linear-gradient(135deg, #E91E63 0%, #9C27B0 50%, #4f8ef7 100%)';
+      } else if (type === 'stripes') {
+        document.body.style.background = '';
+        document.body.style.backgroundImage = 'repeating-linear-gradient(45deg, #eaf2ff, #eaf2ff 20px, #f8f8ff 20px, #f8f8ff 40px)';
+      } else if (type === 'dots') {
+        document.body.style.background = '';
+        document.body.style.backgroundImage = 'radial-gradient(#eaf2ff 2px, transparent 2px), radial-gradient(#eaf2ff 2px, #f8f8ff 2px)';
+        document.body.style.backgroundSize = '20px 20px';
+        document.body.style.backgroundPosition = '0 0, 10px 10px';
+      }
+      // 文字色は常に黒
+      document.body.style.color = '#222';
+      document.getElementById('main-area').style.color = '#222';
+      document.getElementById('score-area').style.color = '#222';
+      document.querySelectorAll('#main-area, #main-area *').forEach(el => {
+        if (el.tagName === 'LABEL' || el.tagName === 'H2' || el.tagName === 'DIV' || el.tagName === 'SPAN') {
+          el.style.color = '#222';
+        }
+      });
+    }
+
+    // BGM曲リスト
+    const bgmList = [
+      'Glass_City_Glow.mp3',
+      'Lemon_Days.mp3', 
+      'Tears_in_the_Quiet_Rain.mp3',
+      'The_clearest_soda_in_the_world.mp3',
+      'Afternoon_Meandering.mp3'
+    ];
+    let currentBgmIndex = 0;
+
+    function playBGM() {
+      const audio = document.getElementById('bgm');
+      if (audio) {
+        // ランダムな曲を選択
+        currentBgmIndex = Math.floor(Math.random() * bgmList.length);
+        audio.src = bgmList[currentBgmIndex];
+        audio.volume = 0.3;
+        audio.play().catch(e => {
+          console.log('BGMファイルが存在しないか、再生できません:', e);
+          alert('BGMファイルが見つかりません。ファイルをダウンロードフォルダからコピーしてください。');
+        });
+      } else {
+        alert('BGMファイルが設定されていません');
+      }
+    }
+
+    function pauseBGM() {
+      const audio = document.getElementById('bgm');
+      if (audio) {
+        audio.pause();
+      }
+    }
+
+    // カスタマイズボタン
+    function showCustomize() {
+      document.getElementById('main-area').innerHTML = `
+        <h2>カスタマイズ画面</h2>
+        <div style="margin:16px 0;">背景：
+          <button onclick="setBgPattern('plain', '#f8f8ff')">白</button>
+          <button onclick="setBgPattern('plain', '#222')">黒</button>
+          <button onclick="setBgPattern('plain', '#eaf2ff')">水色</button>
+          <button onclick="setBgPattern('gradient1')">ブルー→オレンジ→グリーン</button>
+          <button onclick="setBgPattern('gradient2')">ピンク→紫→青</button>
+          <button onclick="setBgPattern('stripes')">ストライプ</button>
+          <button onclick="setBgPattern('dots')">ドット</button>
+        </div>
+        <div style="margin:16px 0;">ボタン色：
+          <div>クイズ:
+            <button onclick="setMenuBtnColor('quiz', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('quiz', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('quiz', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('quiz', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('quiz', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('quiz', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('quiz', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('quiz', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>並べ替えパズル:
+            <button onclick="setMenuBtnColor('sort', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('sort', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('sort', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('sort', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('sort', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('sort', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('sort', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('sort', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>全都道府県並べ替え:
+            <button onclick="setMenuBtnColor('allsort', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('allsort', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('allsort', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('allsort', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('allsort', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('allsort', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('allsort', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('allsort', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>タイムアタック:
+            <button onclick="setMenuBtnColor('timeattack', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('timeattack', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('timeattack', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('timeattack', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('timeattack', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('timeattack', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('timeattack', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('timeattack', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>地図パズル:
+            <button onclick="setMenuBtnColor('map', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('map', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('map', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('map', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('map', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('map', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('map', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('map', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>方言モード:
+            <button onclick="setMenuBtnColor('dialect', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('dialect', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('dialect', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('dialect', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('dialect', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('dialect', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('dialect', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('dialect', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>マスコットモード:
+            <button onclick="setMenuBtnColor('mascot', '#E91E63')" style="background:#E91E63">ピンク</button>
+            <button onclick="setMenuBtnColor('mascot', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('mascot', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('mascot', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('mascot', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('mascot', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('mascot', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('mascot', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>県庁所在地クイズ:
+            <button onclick="setMenuBtnColor('prefectures', '#9C27B0')" style="background:#9C27B0">紫</button>
+            <button onclick="setMenuBtnColor('prefectures', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('prefectures', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('prefectures', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('prefectures', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('prefectures', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('prefectures', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('prefectures', '#E91E63')" style="background:#E91E63">ピンク</button>
+          </div>
+          <div>山地・山脈クイズ:
+            <button onclick="setMenuBtnColor('mountains', '#795548')" style="background:#795548">茶色</button>
+            <button onclick="setMenuBtnColor('mountains', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('mountains', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('mountains', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('mountains', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('mountains', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('mountains', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('mountains', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>川クイズ:
+            <button onclick="setMenuBtnColor('rivers', '#2196F3')" style="background:#2196F3">水色</button>
+            <button onclick="setMenuBtnColor('rivers', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('rivers', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('rivers', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('rivers', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('rivers', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('rivers', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('rivers', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+          <div>平地・盆地・大地クイズ:
+            <button onclick="setMenuBtnColor('plains', '#8BC34A')" style="background:#8BC34A">薄緑</button>
+            <button onclick="setMenuBtnColor('plains', '#4f8ef7')" style="background:#4f8ef7">青</button>
+            <button onclick="setMenuBtnColor('plains', '#4CAF50')" style="background:#4CAF50">緑</button>
+            <button onclick="setMenuBtnColor('plains', '#F44336')" style="background:#F44336">赤</button>
+            <button onclick="setMenuBtnColor('plains', '#FF9800')" style="background:#FF9800">オレンジ</button>
+            <button onclick="setMenuBtnColor('plains', '#9E9E9E')" style="background:#9E9E9E">グレー</button>
+            <button onclick="setMenuBtnColor('plains', '#FFEB3B')" style="background:#FFEB3B;color:#222;">黄色</button>
+            <button onclick="setMenuBtnColor('plains', '#9C27B0')" style="background:#9C27B0">紫</button>
+          </div>
+        </div>
+        <div style="margin:16px 0;">BGM：
+          <button onclick="playBGM()">BGM再生</button>
+          <button onclick="pauseBGM()">BGM停止</button>
+        </div>
+        <div style="margin:16px 0;">効果音：
+          <button onclick="toggleSE()" id="se-toggle-btn">効果音ON/OFF</button>
+        </div>
+        <div style="margin:16px 0;color:#c00;">※BGMや効果音が聞こえない場合は、ボタンを押してから再生してください（自動再生制限対策）</div>
+        <button id="back-btn">トップに戻る</button>
+      `;
+      applyMenuBtnColors();
+      document.querySelectorAll('#back-btn').forEach(btn => btn.onclick = showTopMenu);
+    }
+    window.showCustomize = showCustomize;
+    document.getElementById('customize-fab').addEventListener('click', showCustomize);
+
+    window.setButtonColor = function(color) {
+      document.querySelectorAll('button, .piece').forEach(btn => {
+        btn.style.background = color;
+        btn.style.color = (color === '#FFEB3B' || color === '#fff' || color === '#f8f8ff') ? '#222' : '#fff';
+      });
+    };
+    window.setBgPattern = setBgPattern;
+    window.playBGM = playBGM;
+    window.pauseBGM = pauseBGM;
+
+    function showTopMenu() {
+      // タイマーをクリア
+      if (timeTimer) {
+        clearInterval(timeTimer);
+        timeTimer = null;
+      }
+      // スコア表示を更新
+      updateTotalScore();
+      
+      const total = Object.values(bestScores).reduce((sum, score) => sum + score, 0);
+      
+      // メニューを表示
+      let menuHTML;
+      if (learningModeEnabled) {
+        menuHTML = `
+          <div class="mode-btns">
+            <button onclick="learningUI.showDashboard()">📊 ダッシュボード</button>
+            <button id="btn-quiz" style="background:${menuBtnColors.quiz}">📝 クイズで学習</button>
+            <button id="btn-sort" style="background:${menuBtnColors.sort}">🧩 並べ替えパズル</button>
+            <button onclick="showActiveRecall()">🧠 アクティブリコール</button>
+            <button onclick="learningUI.startReview()">📚 復習</button>
+            <button onclick="learningUI.showBadges()">🏆 バッジ</button>
+            <button onclick="learningUI.showSettings()">⚙️ 設定</button>
+          </div>
+        `;
+      } else {
+        menuHTML = `
+          <div class="mode-btns">
+            <button id="btn-quiz" style="background:${menuBtnColors.quiz}">クイズ</button>
+            <button id="btn-sort" style="background:${menuBtnColors.sort}">並べ替えパズル</button>
+            <button id="btn-allsort" style="background:${menuBtnColors.allsort}">全都道府県並べ替え</button>
+            <button id="btn-timeattack" style="background:${menuBtnColors.timeattack}">タイムアタック</button>
+            <button id="btn-map" style="background:${menuBtnColors.map}">地図パズル</button>
+            <button id="btn-dialect" style="background:${menuBtnColors.dialect}">方言モード</button>
+            <button id="btn-mascot" style="background:${menuBtnColors.mascot}">マスコットモード</button>
+            <button id="btn-wrong-review" style="background:#FF6B6B">🔄 間違い復習</button>
+            <button id="btn-timed" style="background:#4ECDC4">⏱️ 時間制限モード</button>
+            <button id="btn-analysis" style="background:#95E1D3">📊 分野別分析</button>
+            <button id="btn-ai-notes" style="background:#B983FF">📝 AIまとめノート</button>
+            <button id="btn-prefectures" style="background:${menuBtnColors.prefectures || '#9C27B0'}">県庁所在地クイズ</button>
+            <button id="btn-mountains" style="background:${menuBtnColors.mountains || '#795548'}">山地・山脈クイズ</button>
+            <button id="btn-rivers" style="background:${menuBtnColors.rivers || '#2196F3'}">川クイズ</button>
+            <button id="btn-plains" style="background:${menuBtnColors.plains || '#8BC34A'}">平地・盆地・大地クイズ</button>
+            ${total >= 100 ? `<button id="btn-world" style="background:#ff5722">🌍 世界地理クイズ</button>` : `<button disabled style="background:#ccc">🔒 世界地理クイズ<br>(合計100点で解放)</button>`}
+            <button id="btn-settings" style="background:#607D8B">⚙️ ゲーム設定</button>
+          </div>
+        `;
+      }
+      
+      document.getElementById('main-area').innerHTML = menuHTML;
+      // ボタンのイベント設定（学習モードでないボタンのみ）
+      if (!learningModeEnabled) {
+        document.getElementById('btn-quiz').onclick = function() {
+          quizIndex = 0;
+          showQuiz();
+        };
+        document.getElementById('btn-sort').onclick = function() {
+          sortIndex = 0;
+          showSortPuzzle();
+        };
+        if (document.getElementById('btn-allsort')) {
+          document.getElementById('btn-allsort').onclick = showAllPrefSort;
+        }
+        if (document.getElementById('btn-timeattack')) {
+          document.getElementById('btn-timeattack').onclick = function() {
+            timeIndex = 0;
+            showTimeAttack();
+          };
+        }
+        if (document.getElementById('btn-map')) {
+          document.getElementById('btn-map').onclick = showMapPuzzle;
+        }
+        if (document.getElementById('btn-dialect')) {
+          document.getElementById('btn-dialect').onclick = function() {
+            dialectIndex = 0;
+            showDialectMode();
+          };
+        }
+        if (document.getElementById('btn-mascot')) {
+          document.getElementById('btn-mascot').onclick = function() {
+            mascotQuizIndex = 0;
+            showMascotMode();
+          };
+        }
+        
+        // 学習効率アップ機能のボタン設定
+        if (document.getElementById('btn-wrong-review')) {
+          document.getElementById('btn-wrong-review').onclick = function() {
+            showWrongReview();
+          };
+        }
+        if (document.getElementById('btn-timed')) {
+          document.getElementById('btn-timed').onclick = function() {
+            showTimedMode();
+          };
+        }
+        if (document.getElementById('btn-analysis')) {
+          document.getElementById('btn-analysis').onclick = function() {
+            showCategoryAnalysis();
+          };
+        }
+        if (document.getElementById('btn-ai-notes')) {
+          document.getElementById('btn-ai-notes').onclick = function() {
+            showAINotes();
+          };
+        }
+        
+        // 新しいクイズモードのボタン設定
+        if (document.getElementById('btn-prefectures')) {
+          document.getElementById('btn-prefectures').onclick = function() {
+            prefecturesQuizIndex = 0;
+            showPrefecturesQuiz();
+          };
+        }
+        if (document.getElementById('btn-mountains')) {
+          document.getElementById('btn-mountains').onclick = function() {
+            mountainsQuizIndex = 0;
+            showMountainsQuiz();
+          };
+        }
+        if (document.getElementById('btn-rivers')) {
+          document.getElementById('btn-rivers').onclick = function() {
+            riversQuizIndex = 0;
+            showRiversQuiz();
+          };
+        }
+        if (document.getElementById('btn-plains')) {
+          document.getElementById('btn-plains').onclick = function() {
+            plainsQuizIndex = 0;
+            showPlainsQuiz();
+          };
+        }
+        
+        // 世界地理クイズボタンの設定
+        if (total >= 100 && document.getElementById('btn-world')) {
+          document.getElementById('btn-world').onclick = function() {
+            worldQuizIndex = 0;
+            showWorldQuiz();
+          };
+        }
+        
+        // 設定ボタンのイベント
+        if (document.getElementById('btn-settings')) {
+          document.getElementById('btn-settings').onclick = showSettings;
+        }
+      } else {
+        // 学習モードでも使えるボタンの設定
+        document.getElementById('btn-quiz').onclick = function() {
+          quizIndex = 0;
+          showQuiz();
+        };
+        document.getElementById('btn-sort').onclick = function() {
+          sortIndex = 0;
+          showSortPuzzle();
+        };
+      }
+    }
+
+    // カスタマイズ画面の色反映
+    function applyMenuBtnColors() {
+      const btnMap = {
+        'btn-quiz': 'quiz',
+        'btn-sort': 'sort',
+        'btn-allsort': 'allsort',
+        'btn-timeattack': 'timeattack',
+        'btn-map': 'map',
+        'btn-dialect': 'dialect',
+        'btn-mascot': 'mascot'
+      };
+      document.querySelectorAll('#main-area button').forEach(btn => {
+        const key = btnMap[btn.id];
+        if (key && menuBtnColors[key]) {
+          btn.style.background = menuBtnColors[key];
+          btn.style.color = (menuBtnColors[key] === '#FFEB3B' || menuBtnColors[key] === '#fff' || menuBtnColors[key] === '#f8f8ff') ? '#222' : '#fff';
+          btn.disabled = false;
+          btn.style.pointerEvents = 'auto';
+        }
+      });
+    }
+
+    // 学習モード切り替え
+    function toggleLearningMode() {
+      learningModeEnabled = !learningModeEnabled;
+      localStorage.setItem('learningModeEnabled', learningModeEnabled);
+      
+      const toggle = document.getElementById('learning-toggle');
+      const streakDisplay = document.getElementById('streak-display');
+      
+      if (learningModeEnabled) {
+        toggle.innerHTML = '🎮 ゲームモード';
+        streakDisplay.style.display = 'block';
+        learningUI.updateStreakDisplay();
+      } else {
+        toggle.innerHTML = '📊 学習モード';
+        streakDisplay.style.display = 'none';
+      }
+      
+      showTopMenu();
+    }
+    
+    // アクティブリコール機能
+    function showActiveRecall() {
+      const mainArea = document.getElementById('main-area');
+      mainArea.innerHTML = `
+        <div class="active-recall-modes">
+          <h2>🧠 アクティブリコール</h2>
+          <div class="mode-btns">
+            <button onclick="startFillInBlank()">📝 穴埋め問題</button>
+            <button onclick="startTableHide()">📊 表の隠しモード</button>
+            <button onclick="startStepLearning()">📖 ステップ学習</button>
+            <button onclick="showDualExplanation()">🔄 二刀流解説</button>
+            <button onclick="showTopMenu()">🔙 メニューに戻る</button>
+          </div>
+        </div>
+      `;
+    }
+    
+    function startFillInBlank() {
+      const sampleTexts = [
+        "日本の首都は東京都で、人口は約1400万人です。日本で最も面積が広い都道府県は北海道です。",
+        "富士山の標高は3776メートルで、静岡県と山梨県にまたがっています。",
+        "日本三景は松島、天橋立、宮島です。これらは江戸時代から名勝として知られています。"
+      ];
+      const randomText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+      activeRecallUI.showFillInBlankMode(randomText);
+    }
+    
+    function startTableHide() {
+      const tableData = [
+        ['東京都', '東京', '約1400万人'],
+        ['大阪府', '大阪', '約880万人'],
+        ['愛知県', '名古屋', '約750万人'],
+        ['福岡県', '福岡', '約510万人']
+      ];
+      const headers = ['都道府県', '県庁所在地', '人口'];
+      activeRecallUI.showTableHideMode(tableData, headers);
+    }
+    
+    function startStepLearning() {
+      activeRecallUI.showStepLearning('日本の地形', {
+        explanation: '日本は島国で、4つの主要な島から構成されています。',
+        example: '本州、北海道、九州、四国が主要な島です。',
+        practice: 'それぞれの島の特徴を答えてください。'
+      });
+    }
+    
+    function showDualExplanation() {
+      const simple = "日本は島の国です。大きな島が4つあります。山がたくさんあって、まわりは海です。";
+      const technical = "日本は東アジアに位置する島嶼国家で、本州・北海道・九州・四国の4つの主要島と約6,800の小島から構成されています。国土の約73%が山地で、環太平洋造山帯に属し、火山活動が活発です。";
+      activeRecallUI.showDualExplanation('日本の地理的特徴', simple, technical);
+    }
+    
+    // 初期表示
+    loadScores();
+    loadCustomQuizzes();
+    
+    // 学習モードの初期設定
+    if (learningModeEnabled) {
+      document.getElementById('learning-toggle').innerHTML = '🎮 ゲームモード';
+      document.getElementById('streak-display').style.display = 'block';
+      learningUI.updateStreakDisplay();
+    }
+    
+    // 学習効率アップ機能の実装
+    let isReviewMode = false;
+    
+    // 1. 間違い復習機能
+    function showWrongReview() {
+      if (wrongQuestions.length === 0) {
+        document.getElementById('main-area').innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <h2>間違えた問題がありません</h2>
+            <p>クイズで間違えた問題がここに表示されます</p>
+            <button onclick="showTopMenu()">メニューに戻る</button>
+          </div>
+        `;
+        return;
+      }
+      
+      // 間違えた問題でクイズを開始
+      quizIndex = 0;
+      quizScore = 0;
+      quizQuestions = [...wrongQuestions];
+      isReviewMode = true;
+      showQuiz();
+    }
+    
+    // 2. 時間制限モード
+    function showTimedMode() {
+      document.getElementById('main-area').innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+          <h2>⏱️ 時間制限モード</h2>
+          <p>各問題に制限時間を設定してクイズに挑戦！</p>
+          <div style="margin: 20px 0;">
+            <label>制限時間（秒）: </label>
+            <select id="time-limit-select" style="padding: 5px; font-size: 16px;">
+              <option value="10">10秒</option>
+              <option value="20">20秒</option>
+              <option value="30" selected>30秒</option>
+              <option value="60">60秒</option>
+            </select>
+          </div>
+          <button onclick="startTimedQuiz()">開始</button>
+          <button onclick="showTopMenu()" style="background: #ccc;">戻る</button>
+        </div>
+      `;
+    }
+    
+    function startTimedQuiz() {
+      timeLimit = parseInt(document.getElementById('time-limit-select').value);
+      isTimedMode = true;
+      quizIndex = 0;
+      quizScore = 0;
+      showQuiz();
+    }
+    
+    // 3. 分野別分析
+    function showCategoryAnalysis() {
+      // カテゴリー別の統計を計算
+      const categories = ['地理', '歴史', '文化', '産業', '方言', 'その他'];
+      let analysisHTML = `
+        <div style="padding: 20px;">
+          <h2>📊 分野別分析</h2>
+          <div style="margin: 20px 0;">
+      `;
+      
+      categories.forEach(category => {
+        const stats = categoryScores[category] || { correct: 0, total: 0 };
+        const percentage = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+        const barWidth = percentage + '%';
+        
+        analysisHTML += `
+          <div style="margin: 15px 0;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+              <span>${category}</span>
+              <span>${stats.correct}/${stats.total} (${percentage}%)</span>
+            </div>
+            <div style="background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden;">
+              <div style="background: ${percentage >= 80 ? '#4CAF50' : percentage >= 60 ? '#FFC107' : '#FF5722'}; 
+                          width: ${barWidth}; height: 100%; transition: width 0.3s;"></div>
+            </div>
+          </div>
+        `;
+      });
+      
+      analysisHTML += `
+          </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <button onclick="showTopMenu()">メニューに戻る</button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('main-area').innerHTML = analysisHTML;
+    }
+    
+    // 間違えた問題を記録する関数
+    function recordWrongAnswer(question) {
+      // 既に記録されているかチェック
+      const exists = wrongQuestions.some(q => q.question === question.question);
+      if (!exists) {
+        wrongQuestions.push(question);
+        localStorage.setItem('wrongQuestions', JSON.stringify(wrongQuestions));
+      }
+    }
+    
+    // カテゴリースコアを更新する関数
+    function updateCategoryScore(category, isCorrect) {
+      if (!categoryScores[category]) {
+        categoryScores[category] = { correct: 0, total: 0 };
+      }
+      categoryScores[category].total++;
+      if (isCorrect) {
+        categoryScores[category].correct++;
+      }
+      localStorage.setItem('categoryScores', JSON.stringify(categoryScores));
+    }
+    
+    // 学習履歴の記録
+    let learningHistory = JSON.parse(localStorage.getItem('learningHistory') || '[]');
+    
+    // AIまとめノート機能
+    function showAINotes() {
+      // 学習履歴からまとめを生成
+      const summaryData = generateLearningSummary();
+      
+      document.getElementById('main-area').innerHTML = `
+        <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+          <h2 style="text-align: center; margin-bottom: 30px;">📝 AIまとめノート</h2>
+          
+          <!-- 今日の学習サマリー -->
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+            <h3 style="margin: 0 0 10px 0;">📊 今日の学習状況</h3>
+            <div style="display: flex; justify-content: space-around; text-align: center;">
+              <div>
+                <div style="font-size: 2rem; font-weight: bold;">${summaryData.todayQuestions}</div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">問題に挑戦</div>
+              </div>
+              <div>
+                <div style="font-size: 2rem; font-weight: bold;">${summaryData.todayAccuracy}%</div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">正答率</div>
+              </div>
+              <div>
+                <div style="font-size: 2rem; font-weight: bold;">${summaryData.todayMinutes}分</div>
+                <div style="font-size: 0.9rem; opacity: 0.9;">学習時間</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 重要語句 -->
+          <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="margin: 0 0 15px 0; color: #333;">🔑 今日学習した重要語句</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              ${summaryData.keyTerms.map(term => `
+                <span style="background: #e3f2fd; color: #1976d2; padding: 8px 16px; border-radius: 20px; font-size: 0.95rem;">
+                  ${term}
+                </span>
+              `).join('')}
+            </div>
+          </div>
+          
+          <!-- 学習内容のまとめ -->
+          <div style="background: #fff; border: 2px solid #e0e0e0; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="margin: 0 0 15px 0; color: #333;">📖 学習内容のまとめ</h3>
+            ${summaryData.summaries.map(summary => `
+              <div style="margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 8px;">
+                <h4 style="margin: 0 0 10px 0; color: #4f8ef7;">${summary.category}</h4>
+                <p style="margin: 0 0 10px 0; line-height: 1.6;">${summary.content}</p>
+                <div style="font-size: 0.9rem; color: #666;">
+                  💡 ポイント: ${summary.keyPoint}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <!-- 苦手分野の分析 -->
+          <div style="background: #fff3cd; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h3 style="margin: 0 0 15px 0; color: #856404;">⚠️ 要復習ポイント</h3>
+            ${summaryData.weakPoints.map(point => `
+              <div style="margin-bottom: 10px; padding: 10px; background: #fff; border-radius: 6px;">
+                <strong>${point.topic}</strong>: ${point.advice}
+              </div>
+            `).join('')}
+          </div>
+          
+          <!-- アクションボタン -->
+          <div style="text-align: center; margin-top: 30px;">
+            <button onclick="exportNotes()" style="background: #4CAF50; margin-right: 10px;">
+              💾 ノートを保存
+            </button>
+            <button onclick="shareNotes()" style="background: #2196F3; margin-right: 10px;">
+              📤 共有する
+            </button>
+            <button onclick="showTopMenu()" style="background: #666;">
+              戻る
+            </button>
+          </div>
+        </div>
+      `;
+    }
+    
+    // 学習サマリーを生成
+    function generateLearningSummary() {
+      const today = new Date().toDateString();
+      const todayHistory = learningHistory.filter(h => new Date(h.timestamp).toDateString() === today);
+      
+      // 今日の統計
+      const todayQuestions = todayHistory.length;
+      const todayCorrect = todayHistory.filter(h => h.correct).length;
+      const todayAccuracy = todayQuestions > 0 ? Math.round((todayCorrect / todayQuestions) * 100) : 0;
+      const todayMinutes = Math.round(todayHistory.reduce((sum, h) => sum + (h.timeSpent || 0), 0) / 60);
+      
+      // 重要語句の抽出
+      const keyTerms = extractKeyTerms(todayHistory);
+      
+      // カテゴリー別のまとめ
+      const summaries = generateCategorySummaries(todayHistory);
+      
+      // 苦手分野の分析
+      const weakPoints = analyzeWeakPoints(todayHistory);
+      
+      return {
+        todayQuestions,
+        todayAccuracy,
+        todayMinutes,
+        keyTerms,
+        summaries,
+        weakPoints
+      };
+    }
+    
+    // 重要語句を抽出
+    function extractKeyTerms(history) {
+      const terms = new Set();
+      const importantWords = [
+        '県庁所在地', '平野', '盆地', '高地', '山脈', '河川', '湖',
+        '人口', '面積', '産業', '特産品', '世界遺産', '国立公園',
+        '気候', '地形', '半島', '諸島', '海峡', '湾'
+      ];
+      
+      history.forEach(h => {
+        if (h.question) {
+          importantWords.forEach(word => {
+            if (h.question.includes(word)) {
+              terms.add(word);
+            }
+          });
+          
+          // 都道府県名も抽出
+          const prefectures = h.question.match(/[都道府県]([都道府県])/g);
+          if (prefectures) {
+            prefectures.forEach(p => terms.add(p));
+          }
+        }
+      });
+      
+      return Array.from(terms).slice(0, 12); // 最大12個まで
+    }
+    
+    // カテゴリー別サマリーを生成
+    function generateCategorySummaries(history) {
+      const categories = {
+        '地理': {
+          keywords: ['平野', '盆地', '山', '川', '湖', '海', '島'],
+          summary: '日本の地形について学習しました。'
+        },
+        '産業': {
+          keywords: ['農業', '工業', '漁業', '産業', '生産', '製造'],
+          summary: '各都道府県の主要産業について学習しました。'
+        },
+        '文化': {
+          keywords: ['祭り', '伝統', '文化', '世界遺産', '名所'],
+          summary: '日本の文化や観光地について学習しました。'
+        }
+      };
+      
+      const summaries = [];
+      
+      Object.entries(categories).forEach(([category, data]) => {
+        const relatedQuestions = history.filter(h => 
+          data.keywords.some(keyword => h.question && h.question.includes(keyword))
+        );
+        
+        if (relatedQuestions.length > 0) {
+          const correctRate = Math.round((relatedQuestions.filter(q => q.correct).length / relatedQuestions.length) * 100);
+          
+          summaries.push({
+            category,
+            content: `${data.summary} ${relatedQuestions.length}問に挑戦し、正答率は${correctRate}%でした。`,
+            keyPoint: relatedQuestions[0].question ? 
+              `「${relatedQuestions[0].question.substring(0, 30)}...」などを学習しました。` : 
+              '様々な問題に取り組みました。'
+          });
+        }
+      });
+      
+      return summaries;
+    }
+    
+    // 苦手分野を分析
+    function analyzeWeakPoints(history) {
+      const incorrectQuestions = history.filter(h => !h.correct);
+      const weakPoints = [];
+      
+      // カテゴリー別に集計
+      const categoryMistakes = {};
+      incorrectQuestions.forEach(q => {
+        const category = q.category || 'その他';
+        categoryMistakes[category] = (categoryMistakes[category] || 0) + 1;
+      });
+      
+      Object.entries(categoryMistakes).forEach(([category, count]) => {
+        if (count >= 2) {
+          weakPoints.push({
+            topic: category,
+            advice: `${count}問間違えました。この分野を重点的に復習しましょう。`
+          });
+        }
+      });
+      
+      return weakPoints.slice(0, 3); // 最大3つまで
+    }
+    
+    // ノートをエクスポート
+    function exportNotes() {
+      const summaryData = generateLearningSummary();
+      const date = new Date().toLocaleDateString('ja-JP');
+      
+      let content = `日本地理学習ノート - ${date}\n\n`;
+      content += `=== 学習状況 ===\n`;
+      content += `問題数: ${summaryData.todayQuestions}問\n`;
+      content += `正答率: ${summaryData.todayAccuracy}%\n`;
+      content += `学習時間: ${summaryData.todayMinutes}分\n\n`;
+      
+      content += `=== 重要語句 ===\n`;
+      content += summaryData.keyTerms.join('、') + '\n\n';
+      
+      content += `=== 学習内容 ===\n`;
+      summaryData.summaries.forEach(s => {
+        content += `【${s.category}】\n${s.content}\n${s.keyPoint}\n\n`;
+      });
+      
+      // ダウンロード
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `学習ノート_${date.replace(/\//g, '-')}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      alert('ノートを保存しました！');
+    }
+    
+    // ノートを共有
+    function shareNotes() {
+      alert('SNS共有機能は準備中です！');
+    }
+    
+    // 学習履歴を記録する関数（既存のクイズ機能に追加）
+    function recordLearningHistory(question, correct, category, timeSpent) {
+      const record = {
+        question: question,
+        correct: correct,
+        category: category || 'その他',
+        timeSpent: timeSpent || 0,
+        timestamp: new Date().toISOString()
+      };
+      
+      learningHistory.push(record);
+      
+      // 最新100件のみ保持
+      if (learningHistory.length > 100) {
+        learningHistory = learningHistory.slice(-100);
+      }
+      
+      localStorage.setItem('learningHistory', JSON.stringify(learningHistory));
+    }
+    
+    // AI解説アシスト機能
+    let aiAssistMode = false;
+    const aiExplanations = {
+      // 地理用語の解説
+      '県庁所在地': '県庁所在地とは、都道府県の行政の中心となる都市のことです。県庁（都道府県庁）が置かれている市町村を指します。',
+      '盆地': '盆地とは、周囲を山や丘陵に囲まれた平らな土地のことです。日本では甲府盆地、奈良盆地などが有名です。',
+      '平野': '平野とは、広く平らな土地のことです。関東平野は日本最大の平野で、東京都や埼玉県などが含まれます。',
+      '高地': '高地とは、標高の高い平らな土地のことです。長野県の諏訪高原などが代表的な例です。',
+      '海流': '海流とは、海の中で一定の方向に流れる水の流れのことです。日本近海では黒潮（暖流）と親潮（寒流）が有名です。',
+      '気候': '気候とは、ある地域の長期間の平均的な天気の状態のことです。日本は温帯に属し、四季がはっきりしています。',
+      
+      // 都道府県の特徴
+      '北海道': '日本最北端の都道府県で、面積が最も広いです。札幌市が道庁所在地で、農業・漁業・観光業が盛んです。',
+      '東京都': '日本の首都で、政治・経済・文化の中心地です。人口は約1400万人で日本最大の都市圏を形成しています。',
+      '京都府': '794年から1869年まで日本の首都でした。多くの寺社仏閣があり、世界遺産も多数存在します。',
+      '沖縄県': '日本最南端の県で、亜熱帯気候です。琉球王国の歴史があり、独特の文化を持っています。',
+      
+      // 産業・特産品
+      'りんご': '青森県が生産量日本一です。「ふじ」「つがる」などの品種が有名で、全国生産量の約60%を占めています。',
+      '米': '新潟県のコシヒカリが特に有名です。日本の主食として重要な農産物です。',
+      '自動車産業': '愛知県豊田市を中心に発展しています。トヨタ自動車の本社があり、関連企業も多数立地しています。',
+      
+      // 文化・方言
+      'だべ': '東北地方の方言で「〜でしょう」という意味です。青森県、岩手県などで使われます。',
+      'やねん': '関西弁で「〜だよ」という意味です。大阪府、京都府、兵庫県などで使われます。',
+      'ばい': '九州地方の方言で「〜だよ」という意味です。福岡県、熊本県などで使われます。'
+    };
+    
+    // AI解説アシストボタンのイベント
+    document.getElementById('ai-assist-btn').onclick = function() {
+      aiAssistMode = !aiAssistMode;
+      const btn = document.getElementById('ai-assist-btn');
+      const container = document.getElementById('ai-assist-container');
+      
+      if (aiAssistMode) {
+        btn.classList.add('active');
+        container.classList.add('show');
+        enableTextHighlight();
+      } else {
+        btn.classList.remove('active');
+        container.classList.remove('show');
+        disableTextHighlight();
+      }
+    };
+    
+    function closeAIAssist() {
+      aiAssistMode = false;
+      document.getElementById('ai-assist-btn').classList.remove('active');
+      document.getElementById('ai-assist-container').classList.remove('show');
+      disableTextHighlight();
+    }
+    
+    // テキストのハイライト機能
+    function enableTextHighlight() {
+      // クイズの問題文や選択肢にハイライト機能を追加
+      document.addEventListener('click', handleTextClick);
+      
+      // 既存のテキストにハイライト可能な要素を追加
+      const mainArea = document.getElementById('main-area');
+      if (mainArea) {
+        highlightKeywords(mainArea);
+      }
+    }
+    
+    function disableTextHighlight() {
+      document.removeEventListener('click', handleTextClick);
+    }
+    
+    function handleTextClick(e) {
+      if (e.target.classList.contains('highlight-text')) {
+        const keyword = e.target.textContent;
+        showAIExplanation(keyword);
+      }
+    }
+    
+    function highlightKeywords(container) {
+      const keywords = Object.keys(aiExplanations);
+      const walker = document.createTreeWalker(
+        container,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+      
+      const textNodes = [];
+      while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+      }
+      
+      textNodes.forEach(node => {
+        let text = node.textContent;
+        let hasMatch = false;
+        
+        keywords.forEach(keyword => {
+          if (text.includes(keyword)) {
+            hasMatch = true;
+            text = text.replace(new RegExp(keyword, 'g'), `<span class="highlight-text">${keyword}</span>`);
+          }
+        });
+        
+        if (hasMatch) {
+          const span = document.createElement('span');
+          span.innerHTML = text;
+          node.parentNode.replaceChild(span, node);
+        }
+      });
+    }
+    
+    function showAIExplanation(keyword) {
+      const content = document.getElementById('ai-assist-content');
+      const explanation = aiExplanations[keyword] || `「${keyword}」についての詳しい解説は準備中です。`;
+      
+      content.innerHTML = `
+        <div style="margin-bottom: 12px;">
+          <strong style="color: #4f8ef7;">「${keyword}」の解説</strong>
+        </div>
+        <div>${explanation}</div>
+        <div style="margin-top: 12px; font-size: 0.85rem; color: #999;">
+          💡 他の言葉をクリックして解説を見ることもできます
+        </div>
+      `;
+      
+      // 解説を表示
+      const container = document.getElementById('ai-assist-container');
+      if (!container.classList.contains('show')) {
+        container.classList.add('show');
+      }
+    }
+    
+    // クイズ表示時にハイライト機能を適用
+    const originalShowQuiz = showQuiz;
+    showQuiz = function() {
+      originalShowQuiz();
+      if (aiAssistMode) {
+        setTimeout(() => {
+          const mainArea = document.getElementById('main-area');
+          if (mainArea) {
+            highlightKeywords(mainArea);
+          }
+        }, 100);
+      }
+    };
+    
+    showTopMenu();
+  </script>
+</body>
+</html>
