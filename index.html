@@ -2,15 +2,38 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>サンプルサイト</title>
-  <!-- CSSを読み込む -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Map Master | 47都道府県マスター</title>
+  <meta name="description" content="47都道府県を楽しく学べるミニサイト">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Map Master">
+  <meta property="og:description" content="47都道府県を楽しく学べるミニサイト">
+  <meta property="og:url" content="https://yuutarou0305.github.io/Map-Master/">
+  <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="style.css">
+  <!-- GitHub Pages（プロジェクトサイト）対策：相対パス推奨。フレームワークを使う場合は base を検討 -->
+  <!-- <base href="/Map-Master/"> -->
 </head>
 <body>
-  <h1>Hello GitHub Pages</h1>
-  <button id="btn">クリックしてね</button>
+  <header>
+    <h1>Map Master</h1>
+    <nav>
+      <a href="./">ホーム</a>
+      <a href="./about.html">このサイトについて</a>
+    </nav>
+  </header>
 
-  <!-- JSを読み込む -->
-  <script src="script.js"></script>
+  <main id="app">
+    <section>
+      <p>ようこそ！ここに地図やクイズのUIを置きます。</p>
+      <button id="btn">クリックしてね</button>
+    </section>
+  </main>
+
+  <footer>
+    <small>&copy; 2025 yuutarou0305</small>
+  </footer>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
