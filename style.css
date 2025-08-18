@@ -1,9 +1,9 @@
-body { font-family: sans-serif; background: #f8f8ff; margin: 0; padding: 0; }
-.container { max-width: 500px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #ccc; padding: 24px; }
-h1 { text-align: center; }
-.score { font-weight: bold; margin-top: 24px; text-align: center; }
-button { padding: 8px 20px; font-size: 1rem; border-radius: 4px; border: none; background: #4f8ef7; color: #fff; cursor: pointer; margin: 8px 0; }
-button:disabled { background: #ccc; }
-.mode-btns { text-align: center; margin: 24px 0; }
-#sort-list li { display: flex; align-items: center; justify-content: space-between; background: #f0f4ff; border-radius: 4px; padding: 8px 12px; margin-bottom: 8px; }
-#sort-list button { padding: 4px 10px; font-size: 1rem; margin-left: 4px; background: #6ca0f7; } 
+body {
+  background-color: lightblue;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: darkblue;
+  text-align: center;
+}
